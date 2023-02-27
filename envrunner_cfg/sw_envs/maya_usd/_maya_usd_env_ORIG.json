@@ -1,0 +1,60 @@
+[
+    "# mayausd/USD entries",
+
+    {"path": "PYTHONPATH", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/USD/lib/python"],
+            "macos": ["${ENVR_SW_PATH_"]
+        }
+    },
+    {"path": "PATH", "mode": "pre", "value": {
+            "windows": [
+                "$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/USD/bin",
+                "$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/USD/lib",
+                "$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/USD/plugin/usd"
+            ]
+        }
+    },
+    {"var": "MAYA_USD_VERSION", "value": "0.21.11"},
+    {"path": "PXR_MTLX_STDLIB_SEARCH_PATHS", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/USD/libraries"]
+        }
+    },
+
+    "# mayausd/MayaUSD entries",
+
+    {"path": "XBMLANGPATH ", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/lib/icons"]
+        }
+    },
+    {"path": "MAYA_SCRIPT_PATH", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/lib/scripts"]
+        }
+    },
+    {"path": "PATH", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/lib"]
+        }
+    },
+    {"path": "PYTHONPATH", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/lib/python"]
+        }
+    },
+    {"path": "PXR_PLUGINPATH_NAME", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/lib/usd"]
+        }
+    },
+    {"var": "MAYAUSD_VERSION", "value": "0.21.0"},
+    {"path": "PXR_MTLX_STDLIB_SEARCH_PATHS", "mode": "pre", "value": {
+            "windows": ["$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/libraries"]
+        }
+    },
+
+    "# MayaUSD plugin and MTOH plugin",
+
+    {"path": "MAYA_PLUG_IN_PATH ", "mode": "pre", "value": {
+            "windows": [
+                "$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/plugin/adsk/plugin",
+                "$MAQ_LIB_THIRDPARTY/maya_usd/windows/Maya[@maya:{MAJOR}]/{VER}/mayausd/MayaUSD/lib/maya"
+            ]
+        }
+    }
+]

@@ -1,0 +1,44 @@
+{
+    "blender": {
+        "version_format": "{MAJOR}.{MINOR}.{BUILD}",
+        "install_location": {
+            "linux": "/usr/bin",
+            "windows": "${SITE_LOCAL_APPS_ROOT}/blender/{VER}",
+            "linux/centos": "",
+            "macos": "/Applications/Blender.app/Contents"
+        }
+    },
+
+    "houdini": {
+        "version_format": "{MAJOR}.{MINOR}.{BUILD}",
+        "install_location": {
+            "linux": "",
+            "windows": "",
+            "linux/centos": "",
+            "macos": ""
+        }
+    },
+
+    "maya": {
+        "version_format": "{MAJOR}.{MINOR}",
+        "install_location": {
+            "linux": "",
+            "windows": [
+                "C:\\Autodesk\\Products\\Maya\\Maya{MAJOR}",
+                "C:\\Program Files\\Autodesk\\Maya{MAJOR}"
+            ],
+            "linux/centos": "",
+            "macos": "/Applications/Maya2023/bin"
+        }
+    },
+
+    "maya_usd": {
+        "version_format": "{MAJOR}.{MINOR}.{BUILD}",
+        "install_location": {
+            "linux": "",
+            "windows": "${USERPROFILE}\\home\\lib\\thirdparty\\maya_usd\\windows\\Maya[@maya:{MAJOR}]\\{VER}",
+            "linux/centos": "",
+            "macos": "/Library/Autodesk/MayaUSD/{VER}/Maya[@maya:{MAJOR}]"
+        }
+    }
+}

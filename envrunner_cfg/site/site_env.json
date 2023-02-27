@@ -1,0 +1,17 @@
+[
+    "# Site env config can provide root paths (that can be used as ",
+    "# embedded env vars in install location spec strings) and also ",
+    "# set studio wide env vars, like licensing env vars",
+
+    "# ---------------------------------------------------------------------",
+    "# NOTE: that you should only use embedded env vars here that you know,",
+    "#       for sure, will exist for users in their base environment when",
+    "#       they log into their workstation.",
+    "# ---------------------------------------------------------------------",
+
+    {"single_path": "SITE_LOCAL_APPS_ROOT", "value": {
+        "windows": "${USERPROFILE}/local_apps",
+        "linux": "${HOME}/local_apps",
+        "macos": "${HOME}/local_apps"
+    }}
+]

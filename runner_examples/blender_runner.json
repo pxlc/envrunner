@@ -1,0 +1,11 @@
+{
+    "#": "Example of EnvRunner runner configuration file",
+
+    "active_sw": ["blender"],
+    "command": "blender",
+    "args": [],
+    "extra_env": [
+        "# This is a env spec list to add",
+        {"var": "TEST_VAR", "value": "TEST_VALUE"}
+    ]
+}
