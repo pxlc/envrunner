@@ -1,8 +1,8 @@
 [
     {"path": "PATH", "value": {
-            "windows": ["${ENVR_SW_BLENDER__PATH}"],
-            "linux": ["${ENVR_SW_BLENDER__PATH}"],
-            "macos": ["${ENVR_SW_BLENDER__PATH}/MacOS"]
+            "windows": ["${ENVR_SW_BLENDER__INSTALL}"],
+            "linux": ["${ENVR_SW_BLENDER__INSTALL}"],
+            "macos": ["${ENVR_SW_BLENDER__INSTALL}/MacOS"]
         },
         "mode": "pre"
     }

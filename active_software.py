@@ -349,7 +349,7 @@ class ActiveSoftwareSnapshot(object):
             sw_name_upper = sw_name.upper()
 
             env_spec_list.append({
-                'var': 'ENVR_SW_%s__PATH' % sw_name.upper(), 
+                'var': 'ENVR_SW_%s__INSTALL' % sw_name.upper(), 
                 'value': sw_info['install_location']
             })
             # DEBUG

@@ -5,61 +5,61 @@
             "# mayausd/USD entries",
 
             {"path": "PYTHONPATH", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/lib/python"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/lib/python"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/lib/python"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/lib/python"]
                 }
             },
             {"path": "PATH", "mode": "pre", "value": {
                     "macos": [
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/bin",
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/lib",
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/plugin/usd"
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/bin",
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/lib",
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/plugin/usd"
                     ],
                     "_all": [
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/bin",
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/lib",
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/plugin/usd"
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/bin",
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/lib",
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/plugin/usd"
                     ]
                 }
             },
             {"var": "MAYA_USD_VERSION", "value": "0.21.11"},
             {"path": "PXR_MTLX_STDLIB_SEARCH_PATHS", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/libraries"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/USD/libraries"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/libraries"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/USD/libraries"]
                 }
             },
 
             "# mayausd/MayaUSD entries",
 
             {"path": "XBMLANGPATH ", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/icons"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/icons"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/icons"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/icons"]
                 }
             },
             {"path": "MAYA_SCRIPT_PATH", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/scripts"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/scripts"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/scripts"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/scripts"]
                 }
             },
             {"path": "PATH", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib"]
                 }
             },
             {"path": "PYTHONPATH", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/python"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/python"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/python"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/python"]
                 }
             },
             {"path": "PXR_PLUGINPATH_NAME", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/usd"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/usd"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/usd"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/usd"]
                 }
             },
             {"var": "MAYAUSD_VERSION", "value": "0.21.0"},
             {"path": "PXR_MTLX_STDLIB_SEARCH_PATHS", "mode": "pre", "value": {
-                    "macos": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/libraries"],
-                    "_all": ["${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/libraries"]
+                    "macos": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/libraries"],
+                    "_all": ["${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/libraries"]
                 }
             },
 
@@ -67,12 +67,12 @@
 
             {"path": "MAYA_PLUG_IN_PATH ", "mode": "pre", "value": {
                     "macos": [
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/plugin/adsk/plugin",
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/maya"
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/plugin/adsk/plugin",
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/maya"
                     ],
                     "_all": [
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/plugin/adsk/plugin",
-                        "${ENVR_SW_MAYA_USD__PATH}/mayausd/MayaUSD/lib/maya"
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/plugin/adsk/plugin",
+                        "${ENVR_SW_MAYA_USD__INSTALL}/mayausd/MayaUSD/lib/maya"
                     ]
                 }
             }
