@@ -114,6 +114,9 @@ class ActiveSoftwareSnapshot(object):
 
     def _expand_embedded_dependant_sw_versions(self, input_str):
 
+        # expands embedded sw versions when using embedded strings like
+        # '[@maya:{MAJOR}.{MINOR}]', for example
+
         all_embedded_str_list = self.DEPEND_SW_VER_REGEX.findall(input_str)
         if not all_embedded_str_list:
             return {}
