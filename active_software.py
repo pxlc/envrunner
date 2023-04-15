@@ -53,6 +53,7 @@ class ActiveSoftwareSnapshot(object):
         self.path_slash = path_slash if path_slash is not None else os.sep
 
         self.sw_info_is_generated = False
+        self.sw_need_version_list = None
 
         self.active_sw_defs_d = self._build_active_sw_info(sw_defs_d)
 
@@ -131,6 +132,29 @@ class ActiveSoftwareSnapshot(object):
                 'str_to_expand': str_to_expand,
             }
         return embed_dep_d
+
+    def _process_str_with_embedded_dependent_sw_versions(self, input_str):
+
+        out_str = input_str
+        embed_dep_d = self._expand_embedded_dependant_sw_versions(out_str)
+        for embedded_str in embed_dep_d.keys():
+            info_d = embed_dep_d[embedded_str]
+            str_to_expand = info_d['str_to_expand']
+            sw_dep_name = info_d['sw_dep_name']
+            if sw_dep_name not in self.sw_need_version_list:
+                raise Exception(
+                    'Dependency sw "%s" is not in list of active sw '
+                    'to determine a version number for, so no '
+                    'version information is available for it. Unable '
+                    'to expand this embedded sw dependency version '
+                    'for sw "%s"' % (sw_dep_name, active_sw))
+
+            sw_dep_info = self.info_by_active_sw[sw_dep_name]
+            sw_dep_ver_info = sw_dep_info['version_info']
+            replacement_str = str_to_expand.format(**sw_dep_ver_info)
+            out_str = out_str.replace(embedded_str, replacement_str)
+
+        return out_str
 
     def _get_specific_install_location(self, install_loc_d):
 
@@ -262,11 +286,11 @@ class ActiveSoftwareSnapshot(object):
         # based on project config or based on override version, skipping
         # any direct dev installs
         #
-        sw_need_version_list = [
+        self.sw_need_version_list = [
             sw for sw in self.info_by_active_sw.keys()
                 if not self.info_by_active_sw[sw]['is_dev_install']]
 
-        for active_sw in sw_need_version_list:
+        for active_sw in self.sw_need_version_list:
 
             sw_info = self.info_by_active_sw[active_sw]
             if (active_sw not in self.sw_versions_d and
@@ -297,33 +321,16 @@ class ActiveSoftwareSnapshot(object):
 
         # Loop through and expand install loction paths with version info and
         # dependant sw version info
-        for active_sw in sw_need_version_list:
+        for active_sw in self.sw_need_version_list:
             sw_info = self.info_by_active_sw[active_sw]
             install_loc = sw_info['install_location']
 
             # first expand dependant software version tags, e.g.
             # [@maya:{MAJOR}] or [@python:{MAJOR}{MINOR}] if there are any
             if '[@' in install_loc:
-                embed_dep_d = self._expand_embedded_dependant_sw_versions(
+                install_loc = \
+                    self._process_str_with_embedded_dependent_sw_versions(
                                                                 install_loc)
-                for embedded_str in embed_dep_d.keys():
-                    info_d = embed_dep_d[embedded_str]
-                    str_to_expand = info_d['str_to_expand']
-                    sw_dep_name = info_d['sw_dep_name']
-                    if sw_dep_name not in sw_need_version_list:
-                        raise Exception(
-                            'Dependency sw "%s" is not in list of active sw '
-                            'to determine a version number for, so no '
-                            'version information is available for it. Unable '
-                            'to expand this embedded sw dependency version '
-                            'for sw "%s"' % (sw_dep_name, active_sw))
-
-                    sw_dep_info = self.info_by_active_sw[sw_dep_name]
-                    sw_dep_ver_info = sw_dep_info['version_info']
-                    replacement_str = str_to_expand.format(**sw_dep_ver_info)
-                    install_loc = install_loc.replace(embedded_str,
-                                                      replacement_str)
-
             install_loc = os.path.expandvars(install_loc)
             install_loc = install_loc.format(**sw_info['version_info'])
             sw_info['install_location'] = conform_path_slash(install_loc,
@@ -355,7 +362,8 @@ class ActiveSoftwareSnapshot(object):
                 evar_name = spec[var_name_key]
                 if '[@' in evar_name:
                     new_evar_name = \
-                        self._expand_embedded_dependant_sw_versions(evar_name)
+                        self._process_str_with_embedded_dependent_sw_versions(
+                                                                    evar_name)
                     spec[var_name_key] = new_evar_name
 
     # TODO: Have the env mechanism generate the following env vars for
