@@ -331,6 +331,33 @@ class ActiveSoftwareSnapshot(object):
         
         self.sw_info_is_generated = True
 
+    def _process_var_name_embedded_dependent_versions(self, spec_list):
+
+        for spec in spec_list:
+            if type(spec) is not dict:
+                continue
+
+            if 'group' in spec:
+                # need to process group's own spec_list
+                self._process_var_name_embedded_dependent_versions(
+                                                        spec['spec_list'])
+                continue
+
+            var_name_key = None
+            if 'var' in spec:
+                var_name_key = 'var'
+            elif 'path' in spec:
+                var_name_key = 'path'
+            elif 'single_path' in spec:
+                var_name_key = 'single_path'
+
+            if var_name_key:
+                evar_name = spec[var_name_key]
+                if '[@' in evar_name:
+                    new_evar_name = \
+                        self._expand_embedded_dependant_sw_versions(evar_name)
+                    spec[var_name_key] = new_evar_name
+
     # TODO: Have the env mechanism generate the following env vars for
     #       each active sw entry ...
     #
@@ -338,10 +365,6 @@ class ActiveSoftwareSnapshot(object):
     #       ENVR_SW_VER_{sw} (full version)
     #       ENVR_SW_VMAJOR_{sw} (major version only)
     #       ENVR_SW_VMINOR_{sw} (minor version only)
-    #       ENVR_SW_VMM_{sw} (major minor versions compacted together,
-    #                         no spaces)
-    #       ENVR_SW_VBUILD_{sw} (build version only)
-    #       ENVR_SW_VREV_{sw} (revision version only)
 
     def get_active_sw_env_spec(self):
 
@@ -417,24 +440,7 @@ class ActiveSoftwareSnapshot(object):
             with open(env_spec_filepath, 'r') as env_spec_fp:
                 env_spec_list += json.load(env_spec_fp)
 
-        for e_spec in env_spec_list:
-            if type(e_spec) is not dict:
-                continue
-
-            var_name_key = None
-            if 'var' in e_spec:
-                var_name_key = 'var'
-            elif 'path' in e_spec:
-                var_name_key = 'path'
-            elif 'single_path' in e_spec:
-                var_name_key = 'single_path'
-
-            if var_name_key:
-                evar_name = e_spec[var_name_key]
-                if '[@' in evar_name:
-                    new_evar_name = \
-                        self._expand_embedded_dependant_sw_versions(evar_name)
-                    e_spec[var_name_key] = new_evar_name
+        self._process_var_name_embedded_dependent_versions(env_spec_list)
 
         return env_spec_list
 
