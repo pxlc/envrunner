@@ -417,5 +417,24 @@ class ActiveSoftwareSnapshot(object):
             with open(env_spec_filepath, 'r') as env_spec_fp:
                 env_spec_list += json.load(env_spec_fp)
 
+        for e_spec in env_spec_list:
+            if type(e_spec) is not dict:
+                continue
+
+            var_name_key = None
+            if 'var' in e_spec:
+                var_name_key = 'var'
+            elif 'path' in e_spec:
+                var_name_key = 'path'
+            elif 'single_path' in e_spec:
+                var_name_key = 'single_path'
+
+            if var_name_key:
+                evar_name = e_spec[var_name_key]
+                if '[@' in evar_name:
+                    new_evar_name = \
+                        self._expand_embedded_dependant_sw_versions(evar_name)
+                    e_spec[var_name_key] = new_evar_name
+
         return env_spec_list
 
