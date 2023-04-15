@@ -94,7 +94,13 @@ class EnvRunnerEnv(object):
         self._bootstrap_site_env()
 
         self.active_sw_list = active_sw_list
-        self.active_sw_set = set(self.active_sw_list)
+
+        # for active_sw_set, we just want the names of the active software
+        # packages, so need to strip any entries that have the "@" symbol,
+        # indicating an override version or override dev path
+        #
+        self.active_sw_set = set([a_sw.split('@')[0] for a_sw in
+                                    self.active_sw_list])
 
         self.active_sw_snapshot = ActiveSoftwareSnapshot(
                                         self.active_sw_list,
