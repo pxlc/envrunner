@@ -133,8 +133,8 @@ class ActiveSoftwareSnapshot(object):
             }
         return embed_dep_d
 
-    def _process_str_with_embedded_dependent_sw_versions(self, input_str):
-
+    def _process_str_with_embedded_dependent_sw_versions(self, input_str,
+                                                         active_sw=None):
         out_str = input_str
         embed_dep_d = self._expand_embedded_dependant_sw_versions(out_str)
         for embedded_str in embed_dep_d.keys():
@@ -142,12 +142,21 @@ class ActiveSoftwareSnapshot(object):
             str_to_expand = info_d['str_to_expand']
             sw_dep_name = info_d['sw_dep_name']
             if sw_dep_name not in self.sw_need_version_list:
-                raise Exception(
-                    'Dependency sw "%s" is not in list of active sw '
-                    'to determine a version number for, so no '
-                    'version information is available for it. Unable '
-                    'to expand this embedded sw dependency version '
-                    'for sw "%s"' % (sw_dep_name, active_sw))
+                if active_sw:
+                    raise Exception(
+                        'Dependency sw "%s" is not in list of active sw '
+                        'to determine a version number for, so no '
+                        'version information is available for it. Unable '
+                        'to expand this embedded sw dependency version '
+                        'for sw "%s"' % (sw_dep_name, active_sw))
+                else:
+                    raise Exception(
+                        'Dependency sw "%s" is not in list of active sw '
+                        'to determine a version number for, so no '
+                        'version information is available for it. Unable '
+                        'to expand this embedded sw dependency version '
+                        'in environment variable "%s"' % (sw_dep_name,
+                                                          input_str))
 
             sw_dep_info = self.info_by_active_sw[sw_dep_name]
             sw_dep_ver_info = sw_dep_info['version_info']
@@ -330,7 +339,8 @@ class ActiveSoftwareSnapshot(object):
             if '[@' in install_loc:
                 install_loc = \
                     self._process_str_with_embedded_dependent_sw_versions(
-                                                                install_loc)
+                                                                install_loc,
+                                                                active_sw)
             install_loc = os.path.expandvars(install_loc)
             install_loc = install_loc.format(**sw_info['version_info'])
             sw_info['install_location'] = conform_path_slash(install_loc,
