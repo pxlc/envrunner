@@ -25,6 +25,7 @@
 import os
 import re
 import sys
+import json
 import subprocess
 
 from .os_util import os_info, fslash, conform_path_slash
@@ -383,31 +384,6 @@ class EnvRunnerEnv(object):
 
         os.environ.data = bkup_of_os_env_d.copy()
 
-    def launch_subprocess(self, subproc_cmd, subproc_args, creation_flags=0,
-                           shell=False, stdin=None, stdout=None, stderr=None,
-                           cwd=None, detach=False):
-        try:
-            p_info = self._launch_subprocess(
-                                subproc_cmd, subproc_args,
-                                creation_flags=creation_flags,
-                                shell=shell, stdin=stdin, stdout=stdout,
-                                stderr=stderr, cwd=cwd, detach=detach)
-        except:
-            print('')
-            print('------------------------------------------------------')
-            print('>>> ERROR occurred attempting to launch subprocess ...')
-            print('          > command: %s' % subproc_cmd)
-            print('          > args: %s' % subproc_args)
-            print('          > PATH (env var) ...')
-            for p in os.getenv('PATH').split(os.pathsep):
-                if p.strip():
-                    print('                  %s' % p)
-            print('------------------------------------------------------')
-            print('')
-            raise
-
-        return p_info
-
     def _launch_subprocess(self, subproc_cmd, subproc_args, creation_flags=0,
                            shell=False, stdin=None, stdout=None, stderr=None,
                            cwd=None, detach=False):
@@ -433,7 +409,7 @@ class EnvRunnerEnv(object):
                                          stderr=stderr, start_new_session=True,
                                          creationflags=creation_flags)
                     # restore the environment
-                    os.environ.data = orig_env_to_restore_d
+                    self.restore_os_env(orig_env_to_restore_d)
                     return {'pid': p.pid}
                 else:
                     # Do nothing ... in Python 2.7 on linux, just don't call
@@ -446,11 +422,65 @@ class EnvRunnerEnv(object):
                              creationflags=creation_flags)
 
         # restore the environment
-        os.environ.data = orig_env_to_restore_d
+        self.restore_os_env(orig_env_to_restore_d)
+
         if detach:
             return {'pid': p.pid}
         else:
             return {'process': p}
+
+    def launch_subprocess(self, subproc_cmd, subproc_args, creation_flags=0,
+                           shell=False, stdin=None, stdout=None, stderr=None,
+                           cwd=None, detach=False):
+        try:
+            p_info = self._launch_subprocess(
+                                subproc_cmd, subproc_args,
+                                creation_flags=creation_flags,
+                                shell=shell, stdin=stdin, stdout=stdout,
+                                stderr=stderr, cwd=cwd, detach=detach)
+        except:
+            print('')
+            print('------------------------------------------------------')
+            print('>>> ERROR occurred attempting to launch subprocess ...')
+            print('          > command: %s' % subproc_cmd)
+            print('          > args: %s' % subproc_args)
+            print('          > PATH (env var) ...')
+            for p in os.getenv('PATH').split(os.pathsep):
+                if p.strip():
+                    print('                  %s' % p)
+            print('------------------------------------------------------')
+            print('')
+            raise
+
+        return p_info
+
+    def print_env_spec_list(self):
+
+        print('')
+        print(json.dumps(self.env_spec_list, indent=4, sort_keys=True))
+        print('')
+
+    def print_applied_env(self):
+
+        orig_env_to_restore_d = self.copy_of_current_os_env()
+        self.apply_to_os_env()
+
+        for evar in sorted(os.environ.keys()):
+            if 'PATH' in evar:
+                print('')
+                print(':: %s ...' % evar)
+                print('')
+                for path in os.getenv(evar).split(os.pathsep):
+                    if path.strip():
+                        print('    %s' % path.strip())
+            else:
+                print('')
+                print(':: %s = %s' % (evar, os.getenv(evar)))
+
+        print('')
+
+        # restore the environment
+        self.restore_os_env(orig_env_to_restore_d)
 
     # ------------------------------------------------------------------------
     #
