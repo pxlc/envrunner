@@ -70,8 +70,18 @@ EMBEDDED_VAR_PATTERN = r'\${[A-Z_]+}'
 
 def get_all_embedded_vars(input_str):
 
-    embedded_var_list = [ev[2:-1] for ev in
-                            re.findall(EMBEDDED_VAR_PATTERN, input_str)]
+    try:
+        embedded_var_list = [ev[2:-1] for ev in
+                                re.findall(EMBEDDED_VAR_PATTERN, input_str)]
+    except:
+        print('>>>')
+        print('>>>')
+        print('>>> In env_mechanism.get_all_embedded_vars() ...')
+        print('>>>   ERROR parsing string "%s"' % input_str)
+        print('>>>')
+        print('>>>')
+        raise
+
     return embedded_var_list
 
 
@@ -223,6 +233,8 @@ class EnvRunnerEnv(object):
                 if type(env_value) is dict:
                     env_value = self._get_os_specific_value_from_dict(
                                                         env_var, env_value)
+                elif type(env_value) in (int, float, bool):
+                    env_value = str(env_value)
 
                 embedded_vars = get_all_embedded_vars(env_value)
                 self.info_by_env_var[env_var] = {
