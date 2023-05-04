@@ -76,6 +76,17 @@ class ENVRPythonJob001Plugin (DeadlinePlugin):
                 self.AddStdoutHandlerCallback(regex_str).HandleCallback += \
                     self.HandleStdoutError
 
+        # Progress handling
+        a_of_b_progress_pattern = r'Progress: .* \(([0-9]+) of ([0-9]+)\)'
+        self.AddStdoutHandlerCallback(
+            a_of_b_progress_pattern).HandleCallback += self.HandleProgressAofB
+
+        percent_progress_pattern = \
+                        r'Progress: .* \([0-9]{1,3}(\.[0-9]+){0,1}%\)'
+        self.AddStdoutHandlerCallback(
+            percent_progress_pattern).HandleCallback += \
+                self.HandleProgressPercent
+
     ## Called by Deadline for each task the Slave renders.
     def PreRenderTasks(self):
 
@@ -147,4 +158,27 @@ class ENVRPythonJob001Plugin (DeadlinePlugin):
     ## Callback for when a line of stdout contains an ERROR message.
     def HandleStdoutError(self):
         self.FailRender("Detected an error: " + self.GetRegexMatch(0))
+
+    def HandleProgressAofB(self):
+        line = self.GetRegexMatch(0)
+        self.LogWarning(line)
+
+        tmp_str = line.replace('(', '###').replace(')', '###')
+        self.LogWarning(tmp_str)
+
+        tmp2_str = tmp_str.split('###')[-2]
+        self.LogWarning(tmp2_str)
+
+        (a, b) = [int(s) for s in tmp2_str.split(' of ')]
+        progress_f = (float(a) / float(b)) * 100.0
+
+        self.SetProgress(progress_f)
+
+    def HandleProgressPercent(self):
+        line = self.GetRegexMatch(0)
+
+        tmp_str = line.replace('(', '###').replace(')', '###').split('###')[-1]
+        progress_f = float(tmp_str.replace('%', ''))
+
+        self.SetProgress(progress_f)
 
