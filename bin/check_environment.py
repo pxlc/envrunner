@@ -60,17 +60,16 @@ def print_env_details(prj_code, launch_cfg_filepath):
 
     extra_env_spec_list = launch_cfg_d.get('extra_env', [])
 
-    envr_env = EnvRunnerEnv(active_sw_list, site_sw_defs_d, prj_code,
-                            prj_sw_versions_d, site_env_spec_list,
-                            prj_env_spec_list + extra_env_spec_list)
+    envr_env = EnvRunnerEnv(active_sw_list, site_sw_defs_d, site_env_spec_list,
+                            prj_code, prj_sw_versions_d, prj_env_spec_list,
+                            extra_env_spec_list=extra_env_spec_list)
+    print('')
+    print('==== Env Spec List ==================================')
+    envr_env.print_env_spec_list()
 
     print('')
     print('==== Applied Environment ============================')
     envr_env.print_applied_env()
-
-    print('')
-    print('==== Env Spec List ==================================')
-    envr_env.print_env_spec_list()
 
 
 if __name__ == '__main__':

@@ -26,6 +26,9 @@ import os
 import re
 import sys
 import json
+import time
+import getpass
+import datetime
 import subprocess
 
 from .os_util import os_info, fslash, conform_path_slash
@@ -85,10 +88,44 @@ def get_all_embedded_vars(input_str):
     return embedded_var_list
 
 
+def get_user_session_info():
+
+    user_sessions_root = os.getenv('ENVR_USER_SESSIONS_ROOT')
+    if not user_sessions_root:
+        if os_info.os == 'windows':
+            user_sessions_root = (os.path.join(
+                os.path.expandvars('$USERPROFILE'),
+                'AppData', 'Local', 'Temp',
+                '__ENVRUNNER_USER_SESSIONS'
+            ))
+        else:
+            user_sessions_root = '/usr/tmp/__ENVRUNNER_USER_SESSIONS'
+
+    t = time.time()
+    time_ms_str = str(int((t - float(int(t))) * 1000.0) % 1000).zfill(3)
+    session_ts_str = '%s.%s' % (
+                        datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S'),
+                        time_ms_str)
+    session_day_date_str = session_ts_str.split('_')[0]
+
+    user_session_day_dirpath = '%s/%s/%s' % (user_sessions_root,
+                                             getpass.getuser(),
+                                             session_day_date_str)
+    if not os.path.isdir(user_session_day_dirpath):
+        os.makedirs(user_session_day_dirpath)
+
+    return {
+        'user': getpass.getuser(),
+        'session_ts_str': session_ts_str,
+        'user_session_day_dirpath': user_session_day_dirpath,
+    }
+
+
 class EnvRunnerEnv(object):
 
-    def __init__(self, active_sw_list, sw_defs_d, prj_code, prj_sw_versions_d,
-                 site_env_spec_list, prj_env_spec_list, path_slash=None):
+    def __init__(self, active_sw_list, sw_defs_d, site_env_spec_list,
+                 prj_code, prj_sw_versions_d, prj_env_spec_list,
+                 extra_env_spec_list=None, path_slash=None):
 
         self.path_slash = path_slash if path_slash is not None else os.sep
         self.opposite_path_slash = '\\' if self.path_slash == '/' else '/'
@@ -113,6 +150,32 @@ class EnvRunnerEnv(object):
         self.active_sw_set = set([a_sw.split('@')[0] for a_sw in
                                     self.active_sw_list])
 
+        self.user_session_info = get_user_session_info()
+        self.session_spec_file = os.path.join(
+            self.user_session_info.get('user_session_day_dirpath'),
+            '%s_%s_envrunner_session_spec.json' % (
+                        self.user_session_info.get('session_ts_str'),
+                        self.user_session_info.get('user'))
+        )
+        session_spec_d = {
+            '__type__': 'session_spec',
+            'project_code': prj_code,
+            'full_active_sw_list': active_sw_list[:],
+            'active_sw_name_list': sorted(list(self.active_sw_set)),
+            'site_env_spec_list': site_env_spec_list[:],
+            'prj_env_spec_list': prj_env_spec_list[:],
+            'extra_env_spec_list': extra_env_spec_list[:]
+                                        if extra_env_spec_list else [],
+            'prj_sw_versions_d': prj_sw_versions_d.copy(),
+            'active_sw_defs_d': {k: sw_defs_d[k] for k in sw_defs_d.keys()
+                                                if k in self.active_sw_set},
+            'session_spec_file': self.session_spec_file,
+        }
+
+        with open(self.session_spec_file, 'w') as out_fp:
+            out_fp.write('%s\n' %
+                    json.dumps(session_spec_d, indent=4, sort_keys=True))
+
         self.active_sw_snapshot = ActiveSoftwareSnapshot(
                                         self.active_sw_list,
                                         self.sw_defs_d,
@@ -122,12 +185,22 @@ class EnvRunnerEnv(object):
         sw_env_spec_list = self.active_sw_snapshot.get_active_sw_env_spec()
 
         prj_spec = {'var': 'ENVR_PRJ_CODE', 'value': self.prj_code}
+        envr_session_spec = {
+            'single_path': 'ENVR_SESSION_SPEC_FILE',
+            'value': self.session_spec_file,
+        }
 
         self.prj_env_spec_list = prj_env_spec_list
+
+        if extra_env_spec_list is None:
+            extra_env_spec_list = []
+
         self.env_spec_list = self._flatten_spec_list([prj_spec] +
+                                                     [envr_session_spec] +
                                                      site_env_spec_list +
                                                      sw_env_spec_list +
-                                                     prj_env_spec_list)
+                                                     prj_env_spec_list +
+                                                     extra_env_spec_list)
         self.resulting_env_d = None
 
         self.env_var_names = None

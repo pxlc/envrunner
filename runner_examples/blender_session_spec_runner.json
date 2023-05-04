@@ -1,0 +1,67 @@
+{
+    "#1": "Example of EnvRunner runner configuration file that contains a",
+    "#2": "Session Spec",
+
+    "command": "blender",
+    "args": [],
+
+    "session_spec": {
+        "__type__": "session_spec",
+        "active_sw_defs_d": {
+            "blender": {
+                "install_location": {
+                    "linux": "/usr/bin",
+                    "linux/centos": "",
+                    "macos": "/Applications/Blender.app/Contents",
+                    "windows": "${SITE_LOCAL_APPS_ROOT}/blender/{VER}"
+                },
+                "version_format": "{MAJOR}.{MINOR}.{BUILD}"
+            }
+        },
+        "active_sw_name_list": [
+            "blender"
+        ],
+        "extra_env_spec_list": [
+            "# This is a env spec list to add",
+            {
+                "value": "TEST_VALUE",
+                "var": "TEST_VAR"
+            }
+        ],
+        "full_active_sw_list": [
+            "blender@v|3.5.1"
+        ],
+        "prj_env_spec_list": [
+            {
+                "value": "prj1",
+                "var": "MAQ_SHOW_CODE"
+            }
+        ],
+        "prj_sw_versions_d": {
+            "blender": "3.4.1",
+            "houdini": "19.5.000",
+            "maya": "2023.2",
+            "maya_usd": "0.21.0"
+        },
+        "project_code": "prj1",
+        "session_spec_file": "C:\\Users\\mike_\\AppData\\Local\\Temp\\__ENVRUNNER_USER_SESSIONS/maquino/2023-05-03\\2023-05-03_172141.418_maquino_envrunner_session_spec.json",
+        "site_env_spec_list": [
+            "# Site env config can provide root paths (that can be used as ",
+            "# embedded env vars in install location spec strings) and also ",
+            "# set studio wide env vars, like licensing env vars",
+            "# ---------------------------------------------------------------------",
+            "# NOTE: that you should only use embedded env vars here that you know,",
+            "#       for sure, will exist for users in their base environment when",
+            "#       they log into their workstation.",
+            "# ---------------------------------------------------------------------",
+            {
+                "single_path": "SITE_LOCAL_APPS_ROOT",
+                "value": {
+                    "linux": "${HOME}/local_apps",
+                    "macos": "${HOME}/local_apps",
+                    "windows": "${USERPROFILE}/local_apps"
+                }
+            }
+        ]
+    }
+}
