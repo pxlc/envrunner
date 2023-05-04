@@ -1,0 +1,53 @@
+[About]
+Type=label
+Label=About
+Category=About Plugin
+CategoryOrder=-1
+Index=0
+Default=Python-based ENVRUNNER Farm Plugin for Deadline
+Description=Not configurable
+
+[ConcurrentTasks]
+Type=label
+Label=ConcurrentTasks
+Category=About Plugin
+CategoryOrder=-1
+Index=0
+Default=True
+Description=Not configurable
+
+[Python_Executable_2_7]
+Type=multilinemultifilename
+Label=Python 2.7 Executable
+Category=Python Executables
+CategoryOrder=0
+Index=0
+Default=C:\Program Files\Python27\python.exe;/usr/bin/python27
+Description=The path to the Python executable. Enter alternative paths on separate lines.
+
+[Python_Executable_3_7]
+Type=multilinemultifilename
+Label=Python 3.7 Executable
+Category=Python Executables
+CategoryOrder=0
+Index=1
+Default=C:\Program Files\Python37\python.exe;/usr/bin/python37
+Description=The path to the Python executable. Enter alternative paths on separate lines.
+
+[Python_Executable_3_9]
+Type=multilinemultifilename
+Label=Python 3.9 Executable
+Category=Python Executables
+CategoryOrder=0
+Index=1
+Default=C:\Program Files\Python39\python.exe;/usr/bin/python39
+Description=The path to the Python executable. Enter alternative paths on separate lines.
+
+[PythonSearchPaths]
+Type=MultiLineMultiFolder
+Label=Additional Python Search Paths
+Category=Configuration
+Index=0
+CategoryOrder=1
+Default=
+Description=The list of paths to append to the PYTHONPATH environment variable.  This allows the Python job to find custom modules in non-standard locations.
