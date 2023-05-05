@@ -72,14 +72,20 @@ def run_launch_config(prj_code, launch_cfg_filepath, detach_subprocess=False):
     envr_env = EnvRunnerEnv(active_sw_list, sw_defs_d, site_env_spec_list,
                             prj_code, prj_sw_versions_d, prj_env_spec_list,
                             extra_env_spec_list=extra_env_spec_list)
+    p_info = None
 
-    p_info = envr_env.launch_subprocess(
-                    launch_cfg_d.get('command'),
-                    launch_cfg_d.get('args', []),
-                    detach=detach_subprocess)
+    if detach_subprocess:
+        p_info = envr_env.launch_subprocess(
+                        launch_cfg_d.get('command'),
+                        launch_cfg_d.get('args', []),
+                        detach=detach_subprocess)
+    else:
+        # wait on subprocess using subprocess.check_call()
+        envr_env.subprocess_check_call(launch_cfg_d.get('command'),
+                                       launch_cfg_d.get('args', []))
 
     # NOTE: p_info will contain only one key, either "pid" (the process ID of
     #       the spawned process) or "process" (the subprocess.Popen object
-    #       for the subprocess)
+    #       for the subprocess) ... p_info will be None if not detaching
     return p_info
 

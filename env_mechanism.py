@@ -514,6 +514,10 @@ class EnvRunnerEnv(object):
         else:
             return {'process': p}
 
+    def subprocess_check_call(self, cmd, arg_list):
+
+        subprocess.check_call([cmd] + arg_list)
+
     def launch_subprocess(self, subproc_cmd, subproc_args, creation_flags=0,
                            shell=False, stdin=None, stdout=None, stderr=None,
                            cwd=None, detach=False):
