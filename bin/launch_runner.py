@@ -91,10 +91,8 @@ if __name__ == '__main__':
     p_info = run_launch_config(prj_code, runner_cfg_filepath,
                                detach_subprocess=detach_subprocess)
 
+    # if not detaching then p_info will be None
     print('')
     print(':: p_info is %s' % p_info)
     print('')
-
-    if not detach_subprocess:
-        p_info['process'].wait()
 
