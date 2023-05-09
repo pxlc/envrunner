@@ -70,6 +70,9 @@ class ENVRPythonJob001Plugin (DeadlinePlugin):
         self.AddStdoutHandlerCallback(
             "Exception: (.*)" ).HandleCallback += self.HandleStdoutError
 
+        self.AddStdoutHandlerCallback(
+            "SyntaxError: (.*)" ).HandleCallback += self.HandleStdoutError
+
         if 'ErrorRegexList' in stdout_handlers_d:
             regex_str_list = stdout_handlers_d['ErrorRegexList']
             for regex_str in regex_str_list:
