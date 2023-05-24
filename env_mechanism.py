@@ -121,6 +121,51 @@ def get_user_session_info():
     }
 
 
+def create_from_launch_config(prj_code, launch_cfg_filepath):
+
+    # We first load the launch config (runner .json file) and see if it
+    # has a session spec ... session spec is processed differently
+    with open(launch_cfg_filepath, 'r') as fp:
+        launch_cfg_d = json.load(fp)
+
+    if 'session_spec' in launch_cfg_d:
+        session_spec_d = launch_cfg_d['session_spec']
+        site_env_spec_list = session_spec_d['site_env_spec_list']
+        prj_env_spec_list = session_spec_d['prj_env_spec_list']
+        prj_sw_versions_d = session_spec_d['prj_sw_versions_d']
+        sw_defs_d = session_spec_d['active_sw_defs_d']
+        active_sw_list = session_spec_d['full_active_sw_list']
+        extra_env_spec_list = session_spec_d['extra_env_spec_list']
+    else:
+        site_spec_list_file = '%s/site_env.json' % ENVR_CFG_SITE_ROOT
+        with open(site_spec_list_file, 'r') as fp:
+            site_env_spec_list = json.load(fp)
+
+        prj_spec_list_file = (
+            '%s/%s/%s_env.json' % (ENVR_CFG_PROJECTS_ROOT, prj_code, prj_code))
+        with open(prj_spec_list_file, 'r') as fp:
+            prj_env_spec_list = json.load(fp)
+
+        prj_sw_versions_file = (
+            '%s/%s/%s_sw_versions.json' % (
+                                ENVR_CFG_PROJECTS_ROOT, prj_code, prj_code))
+        with open(prj_sw_versions_file, 'r') as fp:
+            prj_sw_versions_d = json.load(fp)
+
+        site_sw_defs_file = '%s/sw_definitions.json' % ENVR_CFG_SITE_ROOT
+        with open(site_sw_defs_file, 'r') as fp:
+            sw_defs_d = json.load(fp)
+
+        active_sw_list = launch_cfg_d['active_sw']
+        extra_env_spec_list = launch_cfg_d.get('extra_env', [])
+
+    envr_env = EnvRunnerEnv(active_sw_list, sw_defs_d, site_env_spec_list,
+                            prj_code, prj_sw_versions_d, prj_env_spec_list,
+                            extra_env_spec_list=extra_env_spec_list)
+
+    return (envr_env, launch_cfg_d)
+
+
 class EnvRunnerEnv(object):
 
     def __init__(self, active_sw_list, sw_defs_d, site_env_spec_list,
