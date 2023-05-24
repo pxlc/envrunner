@@ -477,7 +477,7 @@ class EnvRunnerEnv(object):
         self.apply_to_os_env()
 
         cmd_and_args = [os.path.expandvars(item)
-                            for item in [subproc_cmd] + subproc_args]
+                            for item in ([subproc_cmd] + subproc_args)]
 
         if detach:
             if os_info.os == 'windows':
@@ -516,7 +516,16 @@ class EnvRunnerEnv(object):
 
     def subprocess_check_call(self, cmd, arg_list):
 
-        subprocess.check_call([cmd] + arg_list)
+        orig_env_to_restore_d = self.copy_of_current_os_env()
+        self.apply_to_os_env()
+
+        cmd_and_args = [os.path.expandvars(item)
+                            for item in ([cmd] + arg_list)]
+
+        subprocess.check_call(cmd_and_args)
+
+        # restore the environment
+        self.restore_os_env(orig_env_to_restore_d)
 
     def launch_subprocess(self, subproc_cmd, subproc_args, creation_flags=0,
                            shell=False, stdin=None, stdout=None, stderr=None,
