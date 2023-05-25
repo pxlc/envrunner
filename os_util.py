@@ -108,3 +108,7 @@ def _build_os_info():
 # generate and store OS information
 os_info = _build_os_info()
 
+os.environ['ENVR_OS'] = os_info.os
+os.environ['ENVR_OS_DISTRO'] = os_info.distro
+os.environ['ENVR_OS_VER'] = os_info.version
+

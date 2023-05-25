@@ -63,10 +63,6 @@ os.environ['ENVR_CFG_SITE_ROOT'] = ENVR_CFG_SITE_ROOT
 os.environ['ENVR_CFG_PROJECTS_ROOT'] = ENVR_CFG_PROJECTS_ROOT
 os.environ['ENVR_CFG_SW_ENVS_ROOT'] = ENVR_CFG_SW_ENVS_ROOT
 
-os.environ['ENVR_OS'] = os_info.os
-os.environ['ENVR_OS_DISTRO'] = os_info.distro
-os.environ['ENVR_OS_VER'] = os_info.version
-
 
 EMBEDDED_VAR_PATTERN = r'\${[A-Z_]+}'
 
