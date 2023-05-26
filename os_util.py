@@ -108,7 +108,40 @@ def _build_os_info():
 # generate and store OS information
 os_info = _build_os_info()
 
-os.environ['ENVR_OS'] = os_info.os
-os.environ['ENVR_OS_DISTRO'] = os_info.distro
-os.environ['ENVR_OS_VER'] = os_info.version
+
+# bootstrap the base env vars
+_THIS_DIR = fslash(os.path.dirname(os.path.abspath(__file__)))
+
+ENVR_CFG_ROOT = (
+    os.getenv('ENVR_CFG_ROOT')
+            if os.getenv('ENVR_CFG_ROOT')
+            else '%s/envrunner_cfg' % _THIS_DIR)
+ENVR_CFG_SITE_ROOT = (
+    os.getenv('ENVR_CFG_SITE_ROOT')
+            if os.getenv('ENVR_CFG_SITE_ROOT')
+            else '%s/site' % ENVR_CFG_ROOT)
+ENVR_CFG_PROJECTS_ROOT = (
+    os.getenv('ENVR_CFG_PROJECTS_ROOT')
+            if os.getenv('ENVR_CFG_PROJECTS_ROOT')
+            else '%s/projects' % ENVR_CFG_ROOT)
+ENVR_CFG_SW_ENVS_ROOT = (
+    os.getenv('ENVR_CFG_SW_ENVS_ROOT')
+            if os.getenv('ENVR_CFG_SW_ENVS_ROOT')
+            else '%s/sw_envs' % ENVR_CFG_ROOT)
+
+
+def reset_bootstrap_env():
+
+    os.environ['ENVR_OS'] = os_info.os
+    os.environ['ENVR_OS_DISTRO'] = os_info.distro
+    os.environ['ENVR_OS_VER'] = os_info.version
+
+    os.environ['ENVR_CFG_ROOT'] = ENVR_CFG_ROOT
+    os.environ['ENVR_CFG_SITE_ROOT'] = ENVR_CFG_SITE_ROOT
+    os.environ['ENVR_CFG_PROJECTS_ROOT'] = ENVR_CFG_PROJECTS_ROOT
+    os.environ['ENVR_CFG_SW_ENVS_ROOT'] = ENVR_CFG_SW_ENVS_ROOT
+
+
+reset_bootstrap_env()
+
 

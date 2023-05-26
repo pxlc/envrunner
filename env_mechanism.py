@@ -31,37 +31,15 @@ import getpass
 import datetime
 import subprocess
 
-from .os_util import os_info, fslash, conform_path_slash
+from .os_util import (
+    os_info, fslash, conform_path_slash, reset_bootstrap_env,
+    ENVR_CFG_ROOT, ENVR_CFG_SITE_ROOT, ENVR_CFG_PROJECTS_ROOT, ENVR_CFG_SW_ENVS_ROOT
+)
 from .active_software import ActiveSoftwareSnapshot
 
 
 if sys.version_info.major > 2:
     unicode = str
-
-
-_THIS_DIR = fslash(os.path.dirname(os.path.abspath(__file__)))
-
-ENVR_CFG_ROOT = (
-    os.getenv('ENVR_CFG_ROOT')
-            if os.getenv('ENVR_CFG_ROOT')
-            else '%s/envrunner_cfg' % _THIS_DIR)
-ENVR_CFG_SITE_ROOT = (
-    os.getenv('ENVR_CFG_SITE_ROOT')
-            if os.getenv('ENVR_CFG_SITE_ROOT')
-            else '%s/site' % ENVR_CFG_ROOT)
-ENVR_CFG_PROJECTS_ROOT = (
-    os.getenv('ENVR_CFG_PROJECTS_ROOT')
-            if os.getenv('ENVR_CFG_PROJECTS_ROOT')
-            else '%s/projects' % ENVR_CFG_ROOT)
-ENVR_CFG_SW_ENVS_ROOT = (
-    os.getenv('ENVR_CFG_SW_ENVS_ROOT')
-            if os.getenv('ENVR_CFG_SW_ENVS_ROOT')
-            else '%s/sw_envs' % ENVR_CFG_ROOT)
-
-os.environ['ENVR_CFG_ROOT'] = ENVR_CFG_ROOT
-os.environ['ENVR_CFG_SITE_ROOT'] = ENVR_CFG_SITE_ROOT
-os.environ['ENVR_CFG_PROJECTS_ROOT'] = ENVR_CFG_PROJECTS_ROOT
-os.environ['ENVR_CFG_SW_ENVS_ROOT'] = ENVR_CFG_SW_ENVS_ROOT
 
 
 EMBEDDED_VAR_PATTERN = r'\${[A-Z_]+}'
@@ -187,6 +165,8 @@ class EnvRunnerEnv(object):
     def __init__(self, active_sw_list, sw_defs_d, site_env_spec_list,
                  prj_code, prj_sw_versions_d, prj_env_spec_list,
                  extra_env_spec_list=None, path_slash=None):
+
+        reset_bootstrap_env()
 
         self.path_slash = path_slash if path_slash is not None else os.sep
         self.opposite_path_slash = '\\' if self.path_slash == '/' else '/'
