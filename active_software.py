@@ -99,10 +99,10 @@ class ActiveSoftwareSnapshot(object):
 
         replace_d = {
             '.': '\\.',
-            '{MAJOR}': '(?P<MAJOR>[a-zA-Z0-9]+)',
-            '{MINOR}': '(?P<MINOR>[a-zA-Z0-9]+)',
-            '{BUILD}': '(?P<BUILD>[a-zA-Z0-9]+)',
-            '{REVISION}': '(?P<REVISION>[a-zA-Z0-9]+)',
+            '{MAJOR}': '(?P<MAJOR>[a-zA-Z0-9\-_]+)',
+            '{MINOR}': '(?P<MINOR>[a-zA-Z0-9\-_]+)',
+            '{BUILD}': '(?P<BUILD>[a-zA-Z0-9\-_]+)',
+            '{REVISION}': '(?P<REVISION>[a-zA-Z0-9\-_]+)',
         }
 
         version_regex_pattern = '^%s$' % version_format_str
