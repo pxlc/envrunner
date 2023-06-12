@@ -167,36 +167,26 @@ class ActiveSoftwareSnapshot(object):
 
     def _get_specific_install_location(self, install_loc_d):
 
-        raw_install_loc_str = None
+        raw_install_loc = None
 
         for os_specificity in os_info.specificity_list:
             if os_specificity in install_loc_d:
                 value = install_loc_d[os_specificity]
                 if type(value) is list:
-                    for raw_path in value:
-                        if os.path.exists(os.path.expandvars(raw_path)):
-                            raw_install_loc_str = raw_path
-                            break
-                    if not raw_install_loc_str:
-                        raw_install_loc_str = value[-1] # assume last is default
+                    raw_install_loc = [os.path.expandvars(p) for p in value]
                 else:
                     # otherwise assume it is a string value for location
-                    raw_install_loc_str = value
+                    raw_install_loc = os.path.expandvars(value)
                 break
-        if not raw_install_loc_str and '_all' in install_loc_d:
+        if not raw_install_loc and '_all' in install_loc_d:
             value = install_loc_d['_all']
             if type(value) is list:
-                for raw_path in value:
-                    if os.path.exists(os.path.expandvars(raw_path)):
-                        raw_install_loc_str = raw_path
-                        break
-                if not raw_install_loc_str:
-                    raw_install_loc_str = value[-1] # assume last is default
+                raw_install_loc = [os.path.expandvars(p) for p in value]
             else:
                 # otherwise assume it is a string value for location
-                raw_install_loc_str = value
+                raw_install_loc = os.path.expandvars(value)
 
-        return raw_install_loc_str
+        return raw_install_loc
 
     def _build_active_sw_info(self, sw_defs_d):
 
@@ -253,15 +243,15 @@ class ActiveSoftwareSnapshot(object):
             ver_pattern = None
             ver_regex = None
 
-            raw_install_loc_str = None
+            raw_install_loc = None
             if override_install_loc:
-                raw_install_loc_str = override_install_loc
+                raw_install_loc = override_install_loc
             else:
                 install_loc_d = sw_def['install_location']
-                raw_install_loc_str = self._get_specific_install_location(
+                raw_install_loc = self._get_specific_install_location(
                                                             install_loc_d)
 
-            if not raw_install_loc_str:
+            if not raw_install_loc:
                 raise Exception(
                     'Install location for os "%s" is not defined'
                     ' for software "%s"' % (os_info.os, active_sw))
@@ -271,11 +261,7 @@ class ActiveSoftwareSnapshot(object):
                                                     sw_def['version_format'])
 
             self.info_by_active_sw[active_sw] = {
-                'install_location':
-                        # TODO: add processing of root paths here when root
-                        #       paths module is ready.
-                        os.path.expandvars(
-                            os.path.expanduser(raw_install_loc_str)),
+                'install_location': raw_install_loc,
                 'version_format': (sw_def['version_format']
                                         if not is_dev_install else None),
                 'version_pattern': ver_pattern, # will be None if is_dev True
@@ -288,7 +274,6 @@ class ActiveSoftwareSnapshot(object):
             if is_dev_install:
                 self.info_by_active_sw[active_sw]['version_info'] = {
                                                     'VER': override_version}
-
         # end of "for active_sw ..."
 
         # Now loop through info_by_active_sw dict to capture version numbers
@@ -334,19 +319,37 @@ class ActiveSoftwareSnapshot(object):
             sw_info = self.info_by_active_sw[active_sw]
             install_loc = sw_info['install_location']
 
-            # first expand dependant software version tags, e.g.
-            # [@maya:{MAJOR}] or [@python:{MAJOR}{MINOR}] if there are any
-            if '[@' in install_loc:
-                install_loc = \
-                    self._process_str_with_embedded_dependent_sw_versions(
-                                                                install_loc,
-                                                                active_sw)
-            install_loc = os.path.expandvars(install_loc)
-            install_loc = install_loc.format(**sw_info['version_info'])
-            sw_info['install_location'] = conform_path_slash(install_loc,
-                                                             self.path_slash)
-        
+            if type(install_loc) is list:
+                for raw_install_loc_str in install_loc:
+                    install_loc_str = \
+                        self._evaluate_install_loc_str(raw_install_loc_str,
+                                                       active_sw)
+                    if os.path.isdir(install_loc_str):
+                        break
+            else:
+                # just have a straight str here ...
+                install_loc_str = \
+                    self._evaluate_install_loc_str(install_loc, active_sw)
+
+            sw_info['install_location'] = install_loc_str
+
         self.sw_info_is_generated = True
+
+    def _evaluate_install_loc_str(self, install_loc_str, active_sw):
+
+        # first expand dependant software version tags, e.g.
+        # [@maya:{MAJOR}] or [@python:{MAJOR}{MINOR}] if there are any
+        if '[@' in install_loc_str:
+            install_loc_str = \
+                self._process_str_with_embedded_dependent_sw_versions(
+                                                    install_loc_str,
+                                                    active_sw)
+        # install_loc_str = os.path.expandvars(install_loc_str)
+        install_loc_str = install_loc_str.format(
+                                        **sw_info['version_info'])
+        install_loc_str = conform_path_slash(install_loc_str, self.path_slash)
+
+        return install_loc_str
 
     def _process_var_name_embedded_dependent_versions(self, spec_list):
 
@@ -375,14 +378,6 @@ class ActiveSoftwareSnapshot(object):
                         self._process_str_with_embedded_dependent_sw_versions(
                                                                     evar_name)
                     spec[var_name_key] = new_evar_name
-
-    # TODO: Have the env mechanism generate the following env vars for
-    #       each active sw entry ...
-    #
-    #       ENVR_SW_PATH_{sw} (path to install location)
-    #       ENVR_SW_VER_{sw} (full version)
-    #       ENVR_SW_VMAJOR_{sw} (major version only)
-    #       ENVR_SW_VMINOR_{sw} (minor version only)
 
     def get_active_sw_env_spec(self):
 
