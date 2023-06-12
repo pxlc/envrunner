@@ -323,7 +323,7 @@ class ActiveSoftwareSnapshot(object):
                 for raw_install_loc_str in install_loc:
                     install_loc_str = \
                         self._evaluate_install_loc_str(raw_install_loc_str,
-                                                       active_sw)
+                                                       active_sw, sw_info)
                     if os.path.isdir(install_loc_str):
                         break
             else:
@@ -335,7 +335,7 @@ class ActiveSoftwareSnapshot(object):
 
         self.sw_info_is_generated = True
 
-    def _evaluate_install_loc_str(self, install_loc_str, active_sw):
+    def _evaluate_install_loc_str(self, install_loc_str, active_sw, sw_info):
 
         # first expand dependant software version tags, e.g.
         # [@maya:{MAJOR}] or [@python:{MAJOR}{MINOR}] if there are any
