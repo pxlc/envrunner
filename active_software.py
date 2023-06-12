@@ -329,7 +329,8 @@ class ActiveSoftwareSnapshot(object):
             else:
                 # just have a straight str here ...
                 install_loc_str = \
-                    self._evaluate_install_loc_str(install_loc, active_sw)
+                    self._evaluate_install_loc_str(install_loc, active_sw,
+                                                   sw_info)
 
             sw_info['install_location'] = install_loc_str
 
