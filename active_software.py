@@ -352,6 +352,26 @@ class ActiveSoftwareSnapshot(object):
 
         return install_loc_str
 
+    def _expand_includes(self, env_spec_dirpath, env_spec_list):
+
+        new_env_spec_list = []
+
+        for spec_entry in env_spec_list:
+            if 'INCLUDES' in spec_entry:
+                # read list of include .json files to read and add spec to list
+                for include_path in spec_entry['INCLUDES']:
+                    if include_path[0] == '.':  # relative path "./" or "../"
+                        include_path = '%s/%s' % (env_spec_dirpath,
+                                                  include_path)
+                    with open(include_path, 'r') as in_fp:
+                        inc_spec_list = json.load(in_fp)
+
+                    new_env_spec_list += inc_spec_list
+            else:
+                new_env_spec_list.append(spec_entry)
+
+        return new_env_spec_list
+
     def _process_var_name_embedded_dependent_versions(self, spec_list):
 
         for spec in spec_list:
@@ -453,6 +473,9 @@ class ActiveSoftwareSnapshot(object):
 
             with open(env_spec_filepath, 'r') as env_spec_fp:
                 env_spec_list += json.load(env_spec_fp)
+
+        env_spec_dirpath = os.path.dirname(env_spec_filepath)
+        env_spec_list = self._expand_includes(env_spec_dirpath, env_spec_list)
 
         self._process_var_name_embedded_dependent_versions(env_spec_list)
 
