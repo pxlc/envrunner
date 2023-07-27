@@ -42,6 +42,8 @@ if sys.version_info.major > 2:
     unicode = str
 
 
+_ENVRUNNER_PARENT_DIR = os.path.dirname(os.path.dirname(
+                                            os.path.abspath(__file__)))
 EMBEDDED_VAR_PATTERN = r'\${[A-Z_]+}'
 
 
@@ -499,6 +501,11 @@ class EnvRunnerEnv(object):
 
     def apply_to_os_env(self):
 
+        os.environ['PYTHONPATH'] = (
+            '%s%s%s' % (_ENVRUNNER_PARENT_DIR, os.pathsep,
+                        os.getenv('PYTHONPATH'))
+                if 'PYTHONPATH' in os.environ else _ENVRUNNER_PARENT_DIR)
+
         for env_var in self.resulting_env_d.keys():
             os.environ[str(env_var)] = str(self.resulting_env_d[env_var])
 
@@ -509,6 +516,16 @@ class EnvRunnerEnv(object):
     def restore_os_env(self, bkup_of_os_env_d):
 
         os.environ.data = bkup_of_os_env_d.copy()
+
+    def launch_by_os_system_call(self, os_system_call_str):
+
+        orig_env_to_restore_d = self.copy_of_current_os_env()
+        self.apply_to_os_env()
+
+        os.system(os_system_call_str)
+
+        # restore the environment
+        self.restore_os_env(orig_env_to_restore_d)
 
     def _launch_subprocess(self, subproc_cmd, subproc_args, creation_flags=0,
                            shell=False, stdin=None, stdout=None, stderr=None,

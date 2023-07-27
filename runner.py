@@ -33,11 +33,14 @@ def run_launch_config(prj_code, launch_cfg_filepath, detach_subprocess=False):
                                                 prj_code, launch_cfg_filepath)
     p_info = None
 
-    if detach_subprocess:
+    if 'os_system_call' in launch_cfg_d:
+        envr_env.launch_by_os_system_call(
+                            launch_cfg_d['os_system_call'])
+    elif detach_subprocess:
         p_info = envr_env.launch_subprocess(
-                        launch_cfg_d.get('command'),
-                        launch_cfg_d.get('args', []),
-                        detach=detach_subprocess)
+                            launch_cfg_d.get('command'),
+                            launch_cfg_d.get('args', []),
+                            detach=detach_subprocess)
     else:
         # wait on subprocess using subprocess.check_call()
         envr_env.subprocess_check_call(launch_cfg_d.get('command'),
