@@ -501,13 +501,12 @@ class EnvRunnerEnv(object):
 
     def apply_to_os_env(self):
 
-        os.environ['PYTHONPATH'] = (
-            '%s%s%s' % (_ENVRUNNER_PARENT_DIR, os.pathsep,
-                        os.getenv('PYTHONPATH'))
-                if 'PYTHONPATH' in os.environ else _ENVRUNNER_PARENT_DIR)
-
         for env_var in self.resulting_env_d.keys():
             os.environ[str(env_var)] = str(self.resulting_env_d[env_var])
+            if str(env_var) == 'PYTHONPATH':
+                os.environ['PYTHONPATH'] = ('%s%s%s' % (
+                    _ENVRUNNER_PARENT_DIR, os.pathsep, os.getenv('PYTHONPATH')
+                ))
 
     def copy_of_current_os_env(self):
 
