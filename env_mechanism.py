@@ -503,10 +503,13 @@ class EnvRunnerEnv(object):
 
         for env_var in self.resulting_env_d.keys():
             os.environ[str(env_var)] = str(self.resulting_env_d[env_var])
-            if str(env_var) == 'PYTHONPATH':
-                os.environ['PYTHONPATH'] = ('%s%s%s' % (
-                    _ENVRUNNER_PARENT_DIR, os.pathsep, os.getenv('PYTHONPATH')
-                ))
+
+        # always add access to envrunner package so envr module is available
+        # for convenience functionality
+        os.environ['PYTHONPATH'] = (
+            '%s%s%s' % (_ENVRUNNER_PARENT_DIR, os.pathsep,
+                        os.getenv('PYTHONPATH'))
+                if 'PYTHONPATH' in os.environ else _ENVRUNNER_PARENT_DIR)
 
     def copy_of_current_os_env(self):
 
