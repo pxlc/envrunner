@@ -1,0 +1,10 @@
+{
+    "#": "Example of EnvRunner runner config file using 'os_system_call' ...",
+
+    "active_sw": ["blender"],
+    "os_system_call": "START powershell",
+    "extra_env": [
+        "# This is a env spec list to add",
+        {"var": "WINDOWS_TEST_VAR", "value": "TEST_VALUE"}
+    ]
+}
