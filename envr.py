@@ -5,7 +5,7 @@ import os
 
 def get_sw_install(software_pkg_name):
 
-    env_var = 'ENVR_SW_%s__INSTALl' % software_pkg_name.upper()
+    env_var = 'ENVR_SW_%s__INSTALL' % software_pkg_name.upper()
     return os.getenv(env_var)
 
 
