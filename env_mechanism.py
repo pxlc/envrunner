@@ -74,6 +74,8 @@ def get_user_session_info():
                 'AppData', 'Local', 'Temp',
                 '__ENVRUNNER_USER_SESSIONS'
             ))
+        elif os_info.os == 'macos':
+            user_sessions_root = '/var/tmp/__ENVRUNNER_USER_SESSIONS'
         else:
             user_sessions_root = '/usr/tmp/__ENVRUNNER_USER_SESSIONS'
 
