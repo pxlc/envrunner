@@ -41,3 +41,18 @@ def print_env(compact=False, exclude_env_keys=None):
     print('')
     print('')
 
+
+def open_html_capture_of_env():
+
+    user_session_root = os.getenv('ENVR_USER_SESSION_ROOT')
+    active_sw_list = os.getenv('ENVR_ACTIVE_SW_LIST').split(',')
+
+    active_sw_html_arr = []
+    for active_sw in active_sw_list:
+        entry_str = ''
+        if '@' in active_sw:
+            bits = active_sw.split('@')
+            extra_bits = bits[1].split('|')
+            # continue here
+        else:
+            entry_str = active_sw

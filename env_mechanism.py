@@ -196,12 +196,18 @@ class EnvRunnerEnv(object):
                                     self.active_sw_list])
 
         self.user_session_info = get_user_session_info()
+        self.user_session_root = os.path.join(
+                    self.user_session_info.get('user_session_day_dirpath'),
+                    self.user_session_info.get('session_ts_str'))
+        if not os.path.isdir(self.user_session_root):
+            os.makedirs(self.user_session_root)
+
         self.session_spec_file = os.path.join(
-            self.user_session_info.get('user_session_day_dirpath'),
-            '%s_%s_envrunner_session_spec.json' % (
-                        self.user_session_info.get('session_ts_str'),
-                        self.user_session_info.get('user'))
-        )
+                    self.user_session_root,
+                    '%s_%s_envrunner_session_spec.json' % (
+                            self.user_session_info.get('session_ts_str'),
+                            self.user_session_info.get('user')))
+
         session_spec_d = {
             '__type__': 'session_spec',
             'project_code': prj_code,
@@ -515,6 +521,9 @@ class EnvRunnerEnv(object):
 
         # be sure to also inject the session's raw active sw list
         os.environ['ENVR_ACTIVE_SW_LIST'] = ','.join(self.active_sw_list)
+
+        # inject the user session root path into environment
+        os.environ['ENVR_USER_SESSION_ROOT'] = self.user_session_root
 
     def copy_of_current_os_env(self):
 
