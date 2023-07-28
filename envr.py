@@ -63,13 +63,14 @@ def escape_str_for_html(input_str):
 
 def get_now_timestamp(display_nice=False):
 
-    format_str = '%Y-%m-%d %H:%M:%S' if display_nice else '%Y-%m-%d_%H%M%S'
-    dt = datetime.datetime.now().strftime(format_str)
+    dt = datetime.datetime.now()
+    dt_str = (dt.strftime('%Y-%m-%d %H:%M:%S')
+                    if display_nice else dt.strftime('%Y-%m-%d_%H%M%S'))
 
     t = time.time()  # time in milliseconds
-    millisecs = int((t - float(math.floor(t))) * 1000.0 + 0.5)
+    millisecs_str = str(int((t - float(math.floor(t))) * 1000.0 + 0.5)).zfill(3)
 
-    return '%s.%s' % (dt, millisecs)
+    return str('%s.%s' % (dt_str, millisecs_str))
 
 
 def open_html_capture_of_env():
