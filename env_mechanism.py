@@ -520,7 +520,7 @@ class EnvRunnerEnv(object):
                 if 'PYTHONPATH' in os.environ else _ENVRUNNER_PARENT_DIR)
 
         # be sure to also inject the session's raw active sw list
-        os.environ['ENVR_ACTIVE_SW_LIST'] = ','.join(self.active_sw_list)
+        os.environ['ENVR_ACTIVE_SW_LIST'] = ';'.join(self.active_sw_list)
 
         # inject the user session root path into environment
         os.environ['ENVR_USER_SESSION_ROOT'] = self.user_session_root

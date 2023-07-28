@@ -61,9 +61,10 @@ def escape_str_for_html(input_str):
     return html.escape(input_str)
 
 
-def get_now_timestamp():
+def get_now_timestamp(display_nice=False):
 
-    dt = datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S')
+    format_str = '%Y-%m-%d %H:%M:%S' if display_nice else '%Y-%m-%d_%H%M%S'
+    dt = datetime.datetime.now().strftime(format_str)
 
     t = time.time()  # time in milliseconds
     millisecs = int((t - float(math.floor(t))) * 1000.0 + 0.5)
@@ -74,7 +75,7 @@ def get_now_timestamp():
 def open_html_capture_of_env():
 
     user_session_root = os.getenv('ENVR_USER_SESSION_ROOT')
-    active_sw_list = os.getenv('ENVR_ACTIVE_SW_LIST').split(',')
+    active_sw_list = os.getenv('ENVR_ACTIVE_SW_LIST').split(';')
 
     active_sw_html_arr = []
     for active_sw in active_sw_list:
@@ -93,7 +94,7 @@ def open_html_capture_of_env():
         else:
             entry_str = active_sw
 
-        active_sw_html_arr.append('<li><code>%s</code><li>' % entry_str)
+        active_sw_html_arr.append('<li><code>%s</code></li>' % entry_str)
 
     env_vars_html_arr = []
     for env_key in sorted(os.environ.keys()):
@@ -101,11 +102,11 @@ def open_html_capture_of_env():
             path_items = os.getenv(env_key).split(os.pathsep)
             evar_html = '''
 <div>
-<p><code>%s</code></p>
+<code>%s ...</code><br/>
 {PATH_ENTRIES_HTML}
 </div>
 ''' % env_key
-            path_html_arr = [('<p><code>&nbsp;&nbsp;&nbsp;%s</code></p>' % p)
+            path_html_arr = [('<code>&nbsp;&nbsp;&nbsp;%s</code><br/>' % p)
                                     for p in path_items]
             evar_html = evar_html.format(
                                 PATH_ENTRIES_HTML='\n'.join(path_html_arr))
@@ -124,6 +125,7 @@ def open_html_capture_of_env():
 
     final_html_str = template_str.format(
                 TITLE='ENVRUNNER SESSION INSPECT',
+                SESSION_REPORT_TIMESTAMP=get_now_timestamp(display_nice=True),
                 USER_SESSION_ROOT=user_session_root,
                 ACTIVE_SOFTWARE_LIST_ITEMS='\n'.join(active_sw_html_arr),
                 ENV_ENTRIES='\n'.join(env_vars_html_arr))

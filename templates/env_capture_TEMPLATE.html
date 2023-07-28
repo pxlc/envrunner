@@ -20,10 +20,13 @@
             <div class="card-body">
                 <ul>
                     <li class="card-text">
+                        <b><i>This report generated at:</i></b> <i><code>{SESSION_REPORT_TIMESTAMP}</code></i>
+                    </li>
+                    <li class="card-text">
                         <b>User Session Root:</b> <code>{USER_SESSION_ROOT}</code>
                     </li>
                     <li class="card-text">
-                        <b>Active Software ...</b>
+                        <b>Active Software:</b>
                         <ul>
                             {ACTIVE_SOFTWARE_LIST_ITEMS}
                         </ul>
@@ -34,8 +37,8 @@
 
         <div class="card text-white bg-primary mb-9"
                 style="width: 100%; margin-top: 30px;">
-            <h3 class="card-header">Environment</h3>
-            <div class="card-body">
+            <h3 class="card-header">Full Environment</h3>
+            <div class="card-body" style="margin-bottom: 30px;">
                 {ENV_ENTRIES}
             </div>
         </div>
