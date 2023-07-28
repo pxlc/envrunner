@@ -74,7 +74,7 @@ def get_now_timestamp(display_nice=False):
 
 def open_html_capture_of_env():
 
-    user_session_root = os.getenv('ENVR_USER_SESSION_ROOT')
+    user_current_session_root = os.getenv('ENVR_USER_CURRENT_SESSION_ROOT')
     active_sw_list = os.getenv('ENVR_ACTIVE_SW_LIST').split(';')
 
     active_sw_html_arr = []
@@ -126,11 +126,11 @@ def open_html_capture_of_env():
     final_html_str = template_str.format(
                 TITLE='ENVRUNNER SESSION INSPECT',
                 SESSION_REPORT_TIMESTAMP=get_now_timestamp(display_nice=True),
-                USER_SESSION_ROOT=user_session_root,
+                USER_CURRENT_SESSION_ROOT=user_current_session_root,
                 ACTIVE_SOFTWARE_LIST_ITEMS='\n'.join(active_sw_html_arr),
                 ENV_ENTRIES='\n'.join(env_vars_html_arr))
 
-    output_html_filepath = os.path.join(user_session_root,
+    output_html_filepath = os.path.join(user_current_session_root,
                                         '%s_session_inspect_%s.html' % (
                                                 getpass.getuser(),
                                                 get_now_timestamp()))

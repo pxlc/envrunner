@@ -66,18 +66,18 @@ def get_all_embedded_vars(input_str):
 
 def get_user_session_info():
 
-    user_sessions_root = os.getenv('ENVR_USER_SESSIONS_ROOT')
-    if not user_sessions_root:
+    all_users_sessions_root = os.getenv('ENVR_ALL_USERS_SESSIONS_ROOT')
+    if not all_users_sessions_root:
         if os_info.os == 'windows':
-            user_sessions_root = (os.path.join(
+            all_users_sessions_root = (os.path.join(
                 os.path.expandvars('$USERPROFILE'),
                 'AppData', 'Local', 'Temp',
                 '__ENVRUNNER_USER_SESSIONS'
             ))
         elif os_info.os == 'macos':
-            user_sessions_root = '/var/tmp/__ENVRUNNER_USER_SESSIONS'
+            all_users_sessions_root = '/var/tmp/__ENVRUNNER_USER_SESSIONS'
         else:
-            user_sessions_root = '/usr/tmp/__ENVRUNNER_USER_SESSIONS'
+            all_users_sessions_root = '/usr/tmp/__ENVRUNNER_USER_SESSIONS'
 
     t = time.time()
     time_ms_str = str(int((t - float(int(t))) * 1000.0) % 1000).zfill(3)
@@ -86,7 +86,7 @@ def get_user_session_info():
                         time_ms_str)
     session_day_date_str = session_ts_str.split('_')[0]
 
-    user_session_day_dirpath = '%s/%s/%s' % (user_sessions_root,
+    user_session_day_dirpath = '%s/%s/%s' % (all_users_sessions_root,
                                              getpass.getuser(),
                                              session_day_date_str)
     if not os.path.isdir(user_session_day_dirpath):
@@ -196,14 +196,14 @@ class EnvRunnerEnv(object):
                                     self.active_sw_list])
 
         self.user_session_info = get_user_session_info()
-        self.user_session_root = os.path.join(
+        self.user_current_session_root = os.path.join(
                     self.user_session_info.get('user_session_day_dirpath'),
                     self.user_session_info.get('session_ts_str'))
-        if not os.path.isdir(self.user_session_root):
-            os.makedirs(self.user_session_root)
+        if not os.path.isdir(self.user_current_session_root):
+            os.makedirs(self.user_current_session_root)
 
         self.session_spec_file = os.path.join(
-                    self.user_session_root,
+                    self.user_current_session_root,
                     '%s_%s_envrunner_session_spec.json' % (
                             self.user_session_info.get('session_ts_str'),
                             self.user_session_info.get('user')))
@@ -522,8 +522,9 @@ class EnvRunnerEnv(object):
         # be sure to also inject the session's raw active sw list
         os.environ['ENVR_ACTIVE_SW_LIST'] = ';'.join(self.active_sw_list)
 
-        # inject the user session root path into environment
-        os.environ['ENVR_USER_SESSION_ROOT'] = self.user_session_root
+        # inject the user current session root path into environment
+        os.environ['ENVR_USER_CURRENT_SESSION_ROOT'] = \
+            self.user_current_session_root
 
     def copy_of_current_os_env(self):
 
