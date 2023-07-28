@@ -17,13 +17,10 @@ def get_sw_version(software_pkg_name):
     return os.getenv(env_var)
 
 
-def print_env(full=False, compact=False):
+def print_env(compact=False, exclude_env_keys=None):
 
-    exclude_env_keys = []
-
-    if not full:
-        if os_info == 'linux':
-            exclude_env_keys += ['LS_COLORS']
+    if exclude_env_keys is not None:
+        exclude_env_keys = []
 
     env_keys = [ek for ek in sorted(os.environ.keys())
                                 if ek not in exclude_env_keys]
