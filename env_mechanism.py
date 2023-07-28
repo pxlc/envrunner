@@ -513,6 +513,9 @@ class EnvRunnerEnv(object):
                         os.getenv('PYTHONPATH'))
                 if 'PYTHONPATH' in os.environ else _ENVRUNNER_PARENT_DIR)
 
+        # be sure to also inject the session's raw active sw list
+        os.environ['ENVR_ACTIVE_SW_LIST'] = ','.join(self.active_sw_list)
+
     def copy_of_current_os_env(self):
 
         return os.environ.copy()
