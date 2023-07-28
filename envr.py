@@ -4,6 +4,7 @@ import os
 import sys
 import math
 import time
+import getpass
 import datetime
 import subprocess
 
@@ -123,6 +124,7 @@ def open_html_capture_of_env():
 
     final_html_str = template_str.format(
                 TITLE='ENVRUNNER SESSION INSPECT',
+                USER_SESSION_ROOT=user_session_root,
                 ACTIVE_SOFTWARE_LIST_ITEMS='\n'.join(active_sw_html_arr),
                 ENV_ENTRIES='\n'.join(env_vars_html_arr))
 
