@@ -9,6 +9,7 @@ import datetime
 import subprocess
 
 from envrunner.envr import get_sw_install
+from envrunner.os_util import conform_path_slash
 
 
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -126,7 +127,7 @@ class ENVRJobDeadlineSubmit(object):
         self.session_spec_d.update({
             'command': command_to_execute,
             'args': command_args_list,
-            'active_sw': ['houdini', 'houdini_vray@v|5.20.24'],
+            'active_sw': self.session_spec_d['full_active_sw_list'],
         })
 
         self.job_params_d = _INITIAL_PARAMS.get('job_params').copy()
@@ -195,8 +196,9 @@ class ENVRJobDeadlineSubmit(object):
                 out_fp.write('%s=%s\n' % (plugin_param,
                                           self.plugin_params_d[plugin_param]))
 
-        farm_worker_execution_script = ('%s/envrunner_farm_task_execute.py' %
-                                            _THIS_DIR)
+        farm_worker_execution_script = conform_path_slash(
+            '%s/../bin/deadline/envr_deadline_task_execute.py' % _THIS_DIR)
+
         cmd_and_args = [
             _DEADLINE_CMD, '-SubmitMultipleJobs', '-job',
             job_params_filepath,
