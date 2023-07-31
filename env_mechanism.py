@@ -68,16 +68,22 @@ def get_user_session_info():
 
     all_users_sessions_root = os.getenv('ENVR_ALL_USERS_SESSIONS_ROOT')
     if not all_users_sessions_root:
-        if os_info.os == 'windows':
-            all_users_sessions_root = (os.path.join(
-                os.path.expandvars('$USERPROFILE'),
-                'AppData', 'Local', 'Temp',
-                '__ENVRUNNER_USER_SESSIONS'
-            ))
-        elif os_info.os == 'macos':
-            all_users_sessions_root = '/var/tmp/__ENVRUNNER_USER_SESSIONS'
+        envr_user_data_root = os.getenv('ENVR_USER_DATA_ROOT')
+        if envr_user_data_root:
+            all_users_sessions_root = os.path.join(envr_user_data_root,
+                                                   'envr_user_sessions')
         else:
-            all_users_sessions_root = '/usr/tmp/__ENVRUNNER_USER_SESSIONS'
+            # fallback to standard temp locations
+            if os_info.os == 'windows':
+                all_users_sessions_root = (os.path.join(
+                    os.path.expandvars('$USERPROFILE'),
+                    'AppData', 'Local', 'Temp',
+                    '__ENVRUNNER_USER_SESSIONS'
+                ))
+            elif os_info.os == 'macos':
+                all_users_sessions_root = '/var/tmp/__ENVRUNNER_USER_SESSIONS'
+            else:
+                all_users_sessions_root = '/usr/tmp/__ENVRUNNER_USER_SESSIONS'
 
     t = time.time()
     time_ms_str = str(int((t - float(int(t))) * 1000.0) % 1000).zfill(3)
