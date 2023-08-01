@@ -74,7 +74,7 @@ _INITIAL_PARAMS = {
         'FailureDetectionJobErrors': '0',
         'OverrideTaskFailureDetection': 'True',
         'FailureDetectionTaskErrors': '1',
-        'Plugin': 'ENVRTaskRunnerJob',
+        'Plugin': 'ENVRTaskRunner',
         'MachineName': os.getenv('COMPUTERNAME') or os.getenv('HOSTNAME'),
         'UserName': _USER,
         'OutputDirectory0': '',
@@ -257,7 +257,13 @@ if __name__ == '__main__':
         'FailureDetectionJobErrors': '0',
         'OverrideTaskFailureDetection': 'True',
         'FailureDetectionTaskErrors': '1',
-        'Plugin': 'ENVRTaskRunnerJob',
+
+        # override the plugin name here if you are using your own fork
+        # of the custom Deadline ENVRTaskRunner plugin or if you have
+        # named the plugin with a version
+        #
+        'Plugin': 'ENVRTaskRunner',
+
         'MachineName': os.getenv('COMPUTERNAME') or os.getenv('HOSTNAME'),
         'UserName': _USER,
         'OutputDirectory0': '',
