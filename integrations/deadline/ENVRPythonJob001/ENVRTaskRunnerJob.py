@@ -9,7 +9,7 @@ from Deadline.Scripting import *
 
 def GetDeadlinePlugin():
 
-    return ENVRPythonJob001Plugin()
+    return ENVRTaskRunnerJobPlugin()
 
 
 def CleanupDeadlinePlugin( deadlinePlugin ):
@@ -17,7 +17,7 @@ def CleanupDeadlinePlugin( deadlinePlugin ):
     deadlinePlugin.Cleanup()
 
 
-class ENVRPythonJob001Plugin (DeadlinePlugin):
+class ENVRTaskRunnerJobPlugin(DeadlinePlugin):
 
     def __init__( self ):
 
