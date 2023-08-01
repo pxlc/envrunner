@@ -25,8 +25,9 @@
 import os
 import sys
 import json
-import shlex
 import getpass
+
+from envrunner.renderfarm.envr_deadline import ENVRJobDeadlineSubmit
 
 
 _USER = getpass.getuser()
@@ -41,11 +42,13 @@ if __name__ == '__main__':
         session_spec_d = json.load(in_fp)
 
     command_to_execute = sys.argv[3]
-    command_args_list = shlex.split(sys.argv[4])
-        # sys.argv[4] is all execution args in a single string
+
+    # from index 4 and on sys.argv, if those entries exist, holds
+    # execution arguments
+    command_args_list = sys.argv[4:] if len(sys.argv) > 4 else []
 
     job_params_d = {
-        'Name': 'MIKE-TEST',
+        'Name': 'ENVR Deadline Test',
         'Pool': 'envrunner_test',
         'Frames': '1001',
         'ChunkSize': '4',
@@ -54,9 +57,10 @@ if __name__ == '__main__':
         'OverrideTaskFailureDetection': 'True',
         'FailureDetectionTaskErrors': '1',
 
-        # override the plugin name here if you are using your own fork
-        # of the custom Deadline ENVRTaskRunner plugin or if you have
-        # named the plugin with a version
+        # Override the plugin to use here, if you've renamed your copy of the
+        # ENVRTaskRunner Deadline custom plugin or if you've added a version
+        # number to the plugin name (e.g. "ENVRTaskRunner_v001") for more
+        # controlled deployment of plugin changes to your renderfarm
         #
         'Plugin': 'ENVRTaskRunner',
 

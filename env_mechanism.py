@@ -33,7 +33,8 @@ import subprocess
 
 from .os_util import (
     os_info, fslash, conform_path_slash, reset_bootstrap_env,
-    ENVR_CFG_ROOT, ENVR_CFG_SITE_ROOT, ENVR_CFG_PROJECTS_ROOT, ENVR_CFG_SW_ENVS_ROOT
+    ENVR_CFG_ROOT, ENVR_CFG_SITE_ROOT, ENVR_CFG_PROJECTS_ROOT,
+    ENVR_CFG_SW_ENVS_ROOT
 )
 from .active_software import ActiveSoftwareSnapshot
 
@@ -603,7 +604,23 @@ class EnvRunnerEnv(object):
         cmd_and_args = [os.path.expandvars(item)
                             for item in ([cmd] + arg_list)]
 
-        subprocess.check_call(cmd_and_args)
+        try:
+            subprocess.check_call(cmd_and_args)
+        except:
+            print('>>>')
+            print('>>>')
+            print('>>> ERROR: EnvRunnerEnv.subprocess_check_call() method '
+                  'unable to create subprocess. Here are the command and '
+                  'arguments used ...')
+            for item in cmd_and_args:
+                print('   %s' % item)
+            print('>>>')
+            print('>>> PATH is ...')
+            for p in os.getenv('PATH').split(os.pathsep):
+                print('   %s' % p)
+            print('>>>')
+            print('>>>')
+            raise
 
         # restore the environment
         self.restore_os_env(orig_env_to_restore_d)
