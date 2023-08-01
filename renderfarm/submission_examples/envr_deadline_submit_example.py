@@ -30,6 +30,7 @@ import getpass
 from envrunner.renderfarm.envr_deadline import ENVRJobDeadlineSubmit
 
 
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 _USER = getpass.getuser()
 
 
@@ -75,12 +76,17 @@ if __name__ == '__main__':
     job_extra_env_vars_d = {}
     job_output_root = None
 
+    stdout_handling_json_file = os.path.join(
+                                    _THIS_DIR,
+                                    'job_stdout_handling_regex_patterns.json')
+
     submission = ENVRJobDeadlineSubmit(
                     project_code, session_spec_d,
                     command_to_execute, command_args_list,
                     job_params_d=job_params_d,
                     plugin_params_d=plugin_params_d,
                     job_extra_env_vars_d=job_extra_env_vars_d,
+                    stdout_handling_json_filepath=stdout_handling_json_file,
                     job_output_root=job_output_root)
 
     submission.submit_to_deadline()

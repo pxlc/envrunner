@@ -51,10 +51,14 @@ class ENVRTaskRunnerJobPlugin(DeadlinePlugin):
 
         stdout_handlers_d = {}
 
-        if 'ErrorHandlingJsonFile' in d:
-            json_filepath = os.path.expandvars(d['ErrorHandlingJsonFile'])
+        if 'StdoutHandlersJsonFile' in d:
+            json_filepath = os.path.expandvars(d['StdoutHandlersJsonFile'])
             with open(json_filepath, 'r') as in_fp:
                 stdout_handlers_d = json.load(in_fp)
+
+        self.AddStdoutHandlerCallback(
+            "^((.*)(WARNING|Warning)(.*))$").HandleCallback += \
+                    self.HandleStdoutWarning
 
         if 'WarningRegexList' in stdout_handlers_d:
             regex_str_list = stdout_handlers_d['WarningRegexList']
@@ -160,6 +164,7 @@ class ENVRTaskRunnerJobPlugin(DeadlinePlugin):
 
     ## Callback for when a line of stdout contains an ERROR message.
     def HandleStdoutError(self):
+        self.LogStdout('>> ENVRTaskRunner ERROR >> %s' % self.GetRegexMatch(0))
         self.FailRender("Detected an error: " + self.GetRegexMatch(0))
 
     def HandleProgressAofB(self):

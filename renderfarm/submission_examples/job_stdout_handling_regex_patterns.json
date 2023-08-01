@@ -1,0 +1,9 @@
+{
+    "WarningRegexList": [
+        "^(.*)Some specific warning text(.*)$"
+    ],
+
+    "ErrorRegexList": [
+        "^(.*)Some specific ERROR text(.*)$"
+    ]
+}

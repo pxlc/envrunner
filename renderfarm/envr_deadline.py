@@ -25,6 +25,7 @@
 import os
 import json
 import time
+import shutil
 import getpass
 import datetime
 import subprocess
@@ -137,8 +138,8 @@ class ENVRJobDeadlineSubmit(object):
     def __init__(self, project_code, session_spec_d,
                  command_to_execute, command_args_list,
                  job_params_d=None, plugin_params_d=None,
-                 job_extra_env_vars_d=None, job_output_root=None,
-                 specific_submission_root=None):
+                 job_extra_env_vars_d=None, stdout_handling_json_filepath=None,
+                 job_output_root=None, specific_submission_root=None):
 
         # NOTE: if runner_json_d is provided then runner_filepath is ignored
 
@@ -160,6 +161,7 @@ class ENVRJobDeadlineSubmit(object):
             self.plugin_params_d.update(plugin_params_d)
 
         self.job_extra_env_vars_d = job_extra_env_vars_d
+        self.stdout_handling_json_filepath = stdout_handling_json_filepath
         self.job_output_root = job_output_root
 
         if specific_submission_root:
@@ -179,14 +181,34 @@ class ENVRJobDeadlineSubmit(object):
 
         os.makedirs(submit_folder_path)
 
-        # write out envrunner format runner .json file
+        # Write out envrunner format runner .json file
         runner_filepath = '%s/envrunner_task_runner.json' % submit_folder_path
         with open(runner_filepath, 'w') as out_fp:
             out_fp.write(json.dumps(self.session_spec_d,
                                     indent=4, sort_keys=True))
         
-        # add in any job env vars to job info
+        # Add in any job env vars to job info
         job_params_d = self.job_params_d.copy()
+
+        # If a path to a JSON file containing warning and error regex pattern
+        # lists (for stdout handling) is provided then we copy that file to
+        # the submission area and then add a key value pair to point to the
+        # submission copy of the file to be read by the deadline plugin
+        #
+        if self.stdout_handling_json_filepath:
+            # Copy this file to submission folder
+            stdout_handling_filename = os.path.basename(
+                                            self.stdout_handling_json_filepath)
+            submit_stdout_handling_file = os.path.join(submit_folder_path,
+                                                      stdout_handling_filename)
+            shutil.copy2(self.stdout_handling_json_filepath,
+                         submit_stdout_handling_file)
+
+            # Then specify path to the file in the Extra Info Key Value
+            # data in the job submission params
+            #
+            job_params_d['ExtraInfoKeyValue0'] = ('%s=%s' % (
+                        'StdoutHandlersJsonFile', submit_stdout_handling_file))
 
         extra_env_vars_d = {
             'ENVR_PROJECT_CODE': self.project_code,
