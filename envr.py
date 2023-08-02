@@ -19,14 +19,52 @@ if '.' in _MACHINE_NAME:
     _MACHINE_NAME = _MACHINE_NAME.split('.')[0]
 
 
+def get_env_key(env_descriptor, wrap=False):
+
+    result = 'ENVR_%s' % env_key.replace(' ', '_').upper()
+    if wrap:
+        result = '${%s}' % result
+    return result
+
+
+def get_env_value(env_descriptor):
+
+    return os.getenv(get_env_key(env_descriptor))
+
+
+def get_sw_env_key(sw_name, info_item, wrap=False):
+
+    # info_item is one of: "ver", "install", "vmajor", "vminor"
+
+    result = 'ENVR_SW_%s__%s' % (sw_name.replace(' ', '_').upper(),
+                                 info_item.upper())
+    if wrap:
+        result = '${%s}' % result
+    return result
+
+
+def get_sw_env_value(sw_name, info_item):
+
+    return os.getenv(get_sw_env_key(sw_name, info_item))
+
+
 def get_envrunner_root():
 
     return _THIS_DIR
 
 
-def get_envrunner_cfg_root():
+def get_envrunner_bin(bin_subpath=None, force_slash=None):
 
-    return os.getenv('ENVR_CFG_ROOT')
+    if bin_subpath:
+        return conform_slash('%s/%s/%s' % (_THIS_DIR, "bin", bin_subpath),
+                             force_slash=force_slash)
+
+    return conform_slash('%s/%s' % (_THIS_DIR, "bin"), force_slash=force_slash)
+
+
+def get_envrunner_cfg_root(force_slash=None):
+
+    return conform_slash(os.getenv('ENVR_CFG_ROOT'), force_slash=force_slash)
 
 
 def get_session_spec_filepath():
