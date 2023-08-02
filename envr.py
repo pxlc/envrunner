@@ -21,7 +21,7 @@ if '.' in _MACHINE_NAME:
 
 def get_env_key(env_descriptor, wrap=False):
 
-    result = 'ENVR_%s' % env_key.replace(' ', '_').upper()
+    result = 'ENVR_%s' % env_descriptor.replace(' ', '_').upper()
     if wrap:
         result = '${%s}' % result
     return result
@@ -67,7 +67,7 @@ def get_envrunner_cfg_root(force_slash=None):
     return conform_slash(os.getenv('ENVR_CFG_ROOT'), force_slash=force_slash)
 
 
-def get_session_spec_filepath():
+def get_session_spec_file():
 
     return os.getenv('ENVR_SESSION_SPEC_FILE')
 
