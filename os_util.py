@@ -47,6 +47,11 @@ def conform_path_slash(path_str, force_slash=None):
     return path_str.replace(OPPOSITE_PATH_SLASH_D[path_slash], path_slash)
 
 
+def conform_slash(path_str, force_slash=None):
+
+    return conform_path_slash(path_str, force_slash=force_slash)
+
+
 class InfoObj:
     def __init__(self, d):
         self.__dict__.update(d)

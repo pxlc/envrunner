@@ -30,8 +30,8 @@ import getpass
 import datetime
 import subprocess
 
-from envrunner.envr import get_sw_install
-from envrunner.os_util import conform_path_slash
+from envrunner import envr
+from envrunner.os_util import conform_slash
 
 
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -51,7 +51,7 @@ _UNNAMED_JOB_NAME = ('[ENVRUNNER Python Job (UNNAMED) by %s]' %
 #   The following env vars must be set prior to executing a submission using
 #   this code.
 #
-#   ENVR_USER_DATA_ROOT ... a root folder on the network to write envrunner
+#   ENVR_ALL_USERS_DATA_ROOT ... root folder on the network to write envrunner
 #                           user session data to, and also farm submission
 #                           data to.
 #
@@ -77,13 +77,13 @@ _UNNAMED_JOB_NAME = ('[ENVRUNNER Python Job (UNNAMED) by %s]' %
 #
 # ----------------------------------------------------------------------------
 
-_ENVR_USER_DATA_ROOT = os.getenv('ENVR_USER_DATA_ROOT')
+_ENVR_ALL_USERS_DATA_ROOT = os.getenv('ENVR_ALL_USERS_DATA_ROOT')
 _ENVR_CFG_ROOT = os.getenv('ENVR_CFG_ROOT')
 _ENVR_INSTALL_VERSIONS_ROOT = os.getenv('ENVR_INSTALL_VERSIONS_ROOT')
 
-_ENVR_SUBMISSION_ROOT = '%s/farm_submissions' % _ENVR_USER_DATA_ROOT
+_ENVR_SUBMISSION_ROOT = '%s/farm_submissions' % _ENVR_ALL_USERS_DATA_ROOT
 
-_DEADLINE_CMD = '%s/bin/deadlinecommand' % get_sw_install('deadline')
+_DEADLINE_CMD = '%s/bin/deadlinecommand' % envr.get_sw_install('deadline')
 
 _INITIAL_PARAMS = {
     'job_params':
@@ -239,7 +239,7 @@ class ENVRJobDeadlineSubmit(object):
                 out_fp.write('%s=%s\n' % (plugin_param,
                                           self.plugin_params_d[plugin_param]))
 
-        farm_worker_execution_script = conform_path_slash(
+        farm_worker_execution_script = conform_slash(
             '%s/../bin/deadline/envr_deadline_task_execute.py' % _THIS_DIR)
 
         cmd_and_args = [

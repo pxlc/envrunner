@@ -69,7 +69,7 @@ def get_user_session_info():
 
     all_users_sessions_root = os.getenv('ENVR_ALL_USERS_SESSIONS_ROOT')
     if not all_users_sessions_root:
-        envr_user_data_root = os.getenv('ENVR_USER_DATA_ROOT')
+        envr_user_data_root = os.getenv('ENVR_ALL_USERS_DATA_ROOT')
         if envr_user_data_root:
             all_users_sessions_root = os.path.join(envr_user_data_root,
                                                    'envr_user_sessions')

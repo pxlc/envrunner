@@ -9,10 +9,51 @@ import socket
 import datetime
 import subprocess
 
-from .os_util import os_info
+from .os_util import os_info, conform_slash
 
 
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+_USER = getpass.getuser()
+_MACHINE_NAME = socket.gethostname()
+if '.' in _MACHINE_NAME:
+    _MACHINE_NAME = _MACHINE_NAME.split('.')[0]
+
+
+def get_envrunner_root():
+
+    return _THIS_DIR
+
+
+def get_envrunner_cfg_root():
+
+    return os.getenv('ENVR_CFG_ROOT')
+
+
+def get_session_spec_filepath():
+
+    return os.getenv('ENVR_SESSION_SPEC_FILE')
+
+
+def get_user_session_root():
+
+    return os.getenv('ENVR_USER_CURRENT_SESSION_ROOT')
+
+
+def get_active_sw_list():
+
+    active_sw_str = os.getenv('ENVR_ACTIVE_SW_LIST')
+    return active_sw_str.split(';')
+
+
+def get_all_users_data_root():
+
+    return os.getenv('ENVR_ALL_USERS_DATA_ROOT')
+
+
+def get_user_data_path(subpath):
+
+    return conform_slash(os.path.join(os.getenv('ENVR_ALL_USERS_DATA_ROOT'),
+                                      subpath, get_user()))
 
 
 def get_os():
@@ -32,15 +73,12 @@ def get_os_version():
 
 def get_user():
 
-    return getpass.getuser()
+    return _USER
 
 
 def get_machine_name():
 
-    machine_name = socket.gethostname()
-    if '.' in machine_name:
-        machine_name = machine_name.split('.')[0]
-    return machine_name
+    return _MACHINE_NAME
 
 
 def get_sw_install(software_pkg_name):
