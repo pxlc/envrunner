@@ -5,6 +5,7 @@ import sys
 import math
 import time
 import getpass
+import socket
 import datetime
 import subprocess
 
@@ -12,6 +13,34 @@ from .os_util import os_info
 
 
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def get_os():
+
+    return os_info.os
+
+
+def get_os_distro():
+
+    return os_info.distro
+
+
+def get_os_version():
+
+    return os_info.version
+
+
+def get_user():
+
+    return getpass.getuser()
+
+
+def get_machine_name():
+
+    machine_name = socket.gethostname()
+    if '.' in machine_name:
+        machine_name = machine_name.split('.')[0]
+    return machine_name
 
 
 def get_sw_install(software_pkg_name):
