@@ -9,9 +9,24 @@
     "#       they log into their workstation.",
     "# ---------------------------------------------------------------------",
 
+    {"var": "MONKEY_BALLS", "DELETE_ENV_VAR": true},
+
     {"single_path": "SITE_LOCAL_APPS_ROOT", "value": {
         "windows": "${USERPROFILE}/local_apps",
         "linux": "${HOME}/local_apps",
         "macos": "${HOME}/local_apps"
-    }}
+    }},
+
+    {"path": "__PYTHONPATH__", "mode": "overwrite", "value": {"_all": []},
+        "DELETE_ENV_VAR": true},
+
+    {"path": "PYTHONPATH", "mode": "remove", "value": {
+        "windows": [
+            "D:\\data\\how\\about\\me",
+            "C:\\Program Files\\Monkey\\See\\Monkey\\Do",
+            "E:\\It\\was\\the\\Blurst\\of\\times"
+        ]
+    }},
+
+    "# End of spec list"
 ]

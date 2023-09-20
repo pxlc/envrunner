@@ -272,10 +272,29 @@ class EnvRunnerEnv(object):
         for site_spec in self.site_env_spec_list:
             if type(site_spec) is not dict:
                 continue # skip comments in string entries
+
+            # Mark the spec with "site": True
+            site_spec["site"] = True
+
             if 'SKIP' in site_spec and site_spec['SKIP']:
                 # mechanism to disable an entry yet keep it around for reference
                 continue
-            if 'var' in site_spec or 'single_path' in site_spec:
+
+            if 'DELETE_ENV_VAR' in site_spec and site_spec['DELETE_ENV_VAR']:
+                env_var = None
+                if 'var' in site_spec:
+                    env_var = site_spec['var']
+                elif 'single_path' in site_spec:
+                    env_var = site_spec['single_path']
+                elif 'path' in site_spec:
+                    env_var = site_spec['path']
+                else:
+                    raise Exception('Unknown Site spec format - spec: %s' %
+                                    site_spec)
+                if env_var in os.environ:
+                    del os.environ[env_var]
+
+            elif 'var' in site_spec or 'single_path' in site_spec:
                 spec_var = (site_spec['var'] if 'var' in site_spec
                                              else site_spec['single_path'])
                 spec_value = site_spec['value']
@@ -288,10 +307,42 @@ class EnvRunnerEnv(object):
                                                 self.path_slash)
                 else:
                     os.environ[spec_var] = spec_value
+
+            elif 'path' in site_spec:
+                path_value_d = site_spec['value']
+                path_var = site_spec['path']
+                mode = site_spec['mode']
+                path_value = os.path.expandvars(
+                    self._get_path_value_from_path_spec(path_value_d, path_var))
+                if mode == 'pre':
+                    os.environ[path_var] = os.pathsep.join([
+                                            path_value, os.environ[path_var]])
+                elif mode == 'post':
+                    os.environ[path_var] = os.pathsep.join([
+                                            os.environ[path_var], path_value])
+                elif mode == 'overwrite':
+                    os.environ[path_var] = path_value
+
+                elif mode == 'remove':
+                    # NOTE: this is a Site spec list feature only!
+                    filtered_list = []
+
+                    current_list = os.environ[path_var].split(os.pathsep)
+                    remove_list = path_value.split(os.pathsep)
+
+                    for curr_path in current_list:
+                        if curr_path in remove_list:
+                            continue
+                        filtered_list.append(curr_path)
+
+                    os.environ[path_var] = os.pathsep.join(filtered_list)
+                else:
+                    raise Exception(
+                            'Unknown path mode, "%s", in Site spec list, '
+                            'spec is: %s' % (mode, site_spec))
             else:
                 raise Exception(
-                    'Site env spec only supports a straight "var" or a '
-                    '"single_path" entry, found entry: %s' % site_spec)
+                    'Unknown Site spec dictionary format: %s' % site_spec)
 
     def _get_os_specific_value_from_dict(self, env_var, spec_value_d):
 
@@ -342,6 +393,27 @@ class EnvRunnerEnv(object):
 
         return result_spec_list
 
+    def _get_path_value_from_path_spec(self, path_value_d, path_var):
+
+        distro_key = '%s/%s' % (os_info.os, os_info.distro)
+        version_key = '%s/%s/%s' % (os_info.os, os_info.distro,
+                                    os_info.version)
+        path_value = None
+
+        if version_key in path_value_d:
+            path_value = os.pathsep.join(path_value_d[version_key])
+        elif distro_key in path_value_d:
+            path_value = os.pathsep.join(path_value_d[distro_key])
+        elif os_info.os in path_value_d:
+            path_value = os.pathsep.join(path_value_d[os_info.os])
+        elif '_all' in path_value_d:
+            path_value = os.pathsep.join(path_value_d['_all'])
+        else:
+            # TODO: Warn user that no value was found for this spec
+            raise Exception('No value found for path: %s' % path_var)
+
+        return path_value
+
     def _process_spec_list(self):
 
         self.env_var_names = []
@@ -352,7 +424,12 @@ class EnvRunnerEnv(object):
             # skip comment entries (anything that is a string)
             if type(spec) in (str, unicode):
                 continue
-            # should only have 'var' and 'path' type spec entries now
+
+            if 'site' in spec:
+                # These have already been applied to os.environ
+                # in a site bootstrapping phase, so skip
+                continue
+
             if 'var' in spec or 'single_path' in spec:
                 # handle straight env var assignment ... values may still
                 # contain embedded env vars
@@ -381,27 +458,13 @@ class EnvRunnerEnv(object):
                     self.env_var_names.append(env_var)
 
             elif 'path' in spec:
+
                 path_value_d = spec['value']
                 path_var = spec['path']
                 mode = spec['mode']
 
-                distro_key = '%s/%s' % (os_info.os, os_info.distro)
-                version_key = '%s/%s/%s' % (os_info.os, os_info.distro,
-                                            os_info.version)
-                path_value = None
-
-                if version_key in path_value_d:
-                    path_value = os.pathsep.join(path_value_d[version_key])
-                elif distro_key in path_value_d:
-                    path_value = os.pathsep.join(path_value_d[distro_key])
-                elif os_info.os in path_value_d:
-                    path_value = os.pathsep.join(path_value_d[os_info.os])
-                elif '_all' in path_value_d:
-                    path_value = os.pathsep.join(path_value_d['_all'])
-                else:
-                    # TODO: Warn user that no value was found for this spec
-                    raise Exception('No value found for path: %s' % path_var)
-
+                path_value = self._get_path_value_from_path_spec(path_value_d,
+                                                                 path_var)
                 if path_var not in self.info_by_env_var:
                     self.info_by_env_var[path_var] = {
                         'type': 'path',

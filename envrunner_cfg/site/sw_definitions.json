@@ -1,4 +1,11 @@
 {
+    "fakepypkg": {
+        "version_format": "{MAJOR}.{MINOR}.{BUILD}",
+        "install_location": {
+            "_all": "${ENVR_CFG_ROOT}/fake_sw/fakepypkg/{VER}"
+        }
+    },
+
     "blender": {
         "version_format": "{MAJOR}.{MINOR}.{BUILD}",
         "install_location": {
