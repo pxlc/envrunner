@@ -45,7 +45,7 @@ if sys.version_info.major > 2:
 
 _ENVRUNNER_PARENT_DIR = os.path.dirname(os.path.dirname(
                                             os.path.abspath(__file__)))
-EMBEDDED_VAR_PATTERN = r'\${[A-Z_]+}'
+EMBEDDED_VAR_PATTERN = r'\${[A-Za-z0-9_]+}'
 
 
 def get_all_embedded_vars(input_str):
