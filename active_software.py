@@ -221,8 +221,9 @@ class ActiveSoftwareSnapshot(object):
                         )
                     override_version = bits[1]
                     path_by_os_spec = {
-                        os_spec: path for (os_spec, path) in
-                        [entry.split('=') for entry in bits[2].split(',')]
+                        os_spec: os.path.expandvars(path)
+                        for (os_spec, path) in
+                            [entry.split('=') for entry in bits[2].split(',')]
                     }
                     for os_spec in os_info.specificity_list:
                         if os_spec in path_by_os_spec:
@@ -447,6 +448,8 @@ class ActiveSoftwareSnapshot(object):
             # location for the given active sw ...
             env_spec_filepath = ('%s/envrunner_env.json' %
                                             sw_info['install_location'])
+            install_env_spec_filepath = env_spec_filepath
+
             if not os.path.isfile(env_spec_filepath):
                 env_spec_filepath = None
                 # fall back to central sw_envs
@@ -469,7 +472,8 @@ class ActiveSoftwareSnapshot(object):
 
             if not env_spec_filepath:
                 raise Exception('Unable to find env spec config file for '
-                                'sw named "%s"' % sw_name)
+                                'sw named "%s" (install env spec: %s)' %
+                                (sw_name, install_env_spec_filepath))
 
             with open(env_spec_filepath, 'r') as env_spec_fp:
                 env_spec_list += json.load(env_spec_fp)

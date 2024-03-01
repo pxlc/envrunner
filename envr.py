@@ -4,6 +4,7 @@ import os
 import sys
 import math
 import time
+import shutil
 import getpass
 import socket
 import datetime
@@ -12,7 +13,7 @@ import subprocess
 from .os_util import os_info, conform_slash
 
 
-_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/')
 _USER = getpass.getuser()
 _MACHINE_NAME = socket.gethostname()
 if '.' in _MACHINE_NAME:
@@ -230,6 +231,7 @@ def open_html_capture_of_env():
         template_str = in_fp.read()
 
     final_html_str = template_str.format(
+                TEMPLATES_ROOT='%s/templates' % _THIS_DIR,
                 TITLE='ENVRUNNER SESSION INSPECT',
                 SESSION_REPORT_TIMESTAMP=get_now_timestamp(display_nice=True),
                 USER_CURRENT_SESSION_ROOT=user_current_session_root,
@@ -243,6 +245,11 @@ def open_html_capture_of_env():
 
     with open(output_html_filepath, 'w') as out_fp:
         out_fp.write('%s\n' % final_html_str)
+
+    css_output_filepath = ('%s/bootstrap.min.css' %
+                                os.path.dirname(output_html_filepath))
+    shutil.copy2('%s/templates/bootstrap.min.css' % _THIS_DIR,
+                 css_output_filepath)
 
     if os_info.os == 'windows':
         os.system('START "ENVR SESSION" "%s"' % output_html_filepath)
