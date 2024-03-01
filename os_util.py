@@ -117,22 +117,14 @@ os_info = _build_os_info()
 # bootstrap the base env vars
 _THIS_DIR = fslash(os.path.dirname(os.path.abspath(__file__)))
 
-ENVR_CFG_ROOT = (
-    os.getenv('ENVR_CFG_ROOT')
-            if os.getenv('ENVR_CFG_ROOT')
-            else '%s/envrunner_cfg' % _THIS_DIR)
-ENVR_CFG_SITE_ROOT = (
-    os.getenv('ENVR_CFG_SITE_ROOT')
-            if os.getenv('ENVR_CFG_SITE_ROOT')
-            else '%s/site' % ENVR_CFG_ROOT)
-ENVR_CFG_PROJECTS_ROOT = (
-    os.getenv('ENVR_CFG_PROJECTS_ROOT')
-            if os.getenv('ENVR_CFG_PROJECTS_ROOT')
-            else '%s/projects' % ENVR_CFG_ROOT)
-ENVR_CFG_SW_ENVS_ROOT = (
-    os.getenv('ENVR_CFG_SW_ENVS_ROOT')
-            if os.getenv('ENVR_CFG_SW_ENVS_ROOT')
-            else '%s/sw_envs' % ENVR_CFG_ROOT)
+ENVR_CFG_ROOT = (os.getenv('ENVR_CFG_ROOT')
+                    or '%s/envrunner_cfg' % _THIS_DIR)
+ENVR_CFG_SITE_ROOT = (os.getenv('ENVR_CFG_SITE_ROOT')
+                        or '%s/site' % ENVR_CFG_ROOT)
+ENVR_CFG_PROJECTS_ROOT = (os.getenv('ENVR_CFG_PROJECTS_ROOT')
+                            or '%s/projects' % ENVR_CFG_ROOT)
+ENVR_CFG_SW_ENVS_ROOT = (os.getenv('ENVR_CFG_SW_ENVS_ROOT')
+                            or '%s/sw_envs' % ENVR_CFG_ROOT)
 
 
 def reset_bootstrap_env():

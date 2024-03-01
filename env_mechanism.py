@@ -410,7 +410,8 @@ class EnvRunnerEnv(object):
             path_value = os.pathsep.join(path_value_d['_all'])
         else:
             # TODO: Warn user that no value was found for this spec
-            raise Exception('No value found for path: %s' % path_var)
+            raise Exception('No value found for path: %s with spec value '
+                            'of: %s' % (path_var, path_value_d))
 
         return path_value
 

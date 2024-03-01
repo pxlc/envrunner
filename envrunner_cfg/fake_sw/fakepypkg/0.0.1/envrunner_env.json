@@ -1,5 +1,5 @@
 [
     {"path": "PYTHONPATH", "mode": "pre", "value": {
-        "_all": ["${ENVR_SW_FAKEPYPKG__INSTALL}/python_pkgs"]
+        "_all": ["${@INSTALL}/python_pkgs"]
     }}
 ]
