@@ -476,7 +476,8 @@ class ActiveSoftwareSnapshot(object):
                                 (sw_name, install_env_spec_filepath))
 
             with open(env_spec_filepath, 'r') as env_spec_fp:
-                env_spec_list += json.load(env_spec_fp)
+                env_spec_list += self._expand_sw_at_tags_in_env_var_values(
+                                            sw_name, json.load(env_spec_fp))
 
         env_spec_dirpath = os.path.dirname(env_spec_filepath)
         env_spec_list = self._expand_includes(env_spec_dirpath, env_spec_list)
@@ -484,4 +485,48 @@ class ActiveSoftwareSnapshot(object):
         self._process_var_name_embedded_dependent_versions(env_spec_list)
 
         return env_spec_list
+
+    @staticmethod
+    def _expand_sw_at_in_single_env_spec(sw_caps_name, env_spec):
+
+        def _expand_esw_at(s):
+            return s.replace('${@', '${ENVR_SW_%s__' % sw_caps_name)
+
+        # value can be a string, a list of strings, or a dict with values
+        # that can be a string, or list
+        value = env_spec.get('value')
+        if type(value) is list:
+            new_list = []
+            for s in value:
+                new_list.append(_expand_esw_at(s))
+            env_spec['value'] = new_list
+        elif type(value) is dict:
+            for k, v in value.items():
+                if type(v) is list:
+                    new_list = []
+                    for s in v:
+                        new_list.append(_expand_esw_at(s))
+                    env_spec['value'][k] = new_list
+                else:
+                    # assume v is str
+                    env_spec['value'][k] = _expand_esw_at(s)
+        else:
+            # assume str type
+            env_spec['value'] = _expand_esw_at(value)
+
+    @staticmethod
+    def _expand_sw_at_tags_in_env_var_values(sw_name, sw_env_spec_list):
+
+        sw_caps_name = sw_name.upper()
+
+        for env_spec in sw_env_spec_list:
+            if 'requires' in env_spec:
+                for inner_spec in env_spec.get('spec_list'):
+                    ActiveSoftwareSnapshot._expand_sw_at_in_single_env_spec(
+                                                    sw_caps_name, inner_spec)
+            else:
+                ActiveSoftwareSnapshot._expand_sw_at_in_single_env_spec(
+                                                sw_caps_name, env_spec)
+
+        return sw_env_spec_list
 
