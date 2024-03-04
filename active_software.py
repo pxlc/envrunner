@@ -24,9 +24,14 @@
 
 import os
 import re
+import sys
 import json
 
 from .os_util import os_info, conform_path_slash
+
+
+if sys.version_info.major >= 3:
+    unicode = str
 
 
 DEV_TAG_REGEX = re.compile(r'[a-zA-Z][a-zA-Z0-9_]+')
@@ -497,8 +502,11 @@ class ActiveSoftwareSnapshot(object):
         value = env_spec.get('value')
         if type(value) is list:
             new_list = []
-            for s in value:
-                new_list.append(_expand_esw_at(s))
+            for v in value:
+                if type(v) in (str, unicode):
+                    new_list.append(_expand_esw_at(v))
+                else:
+                    new_list.append(v)
             env_spec['value'] = new_list
         elif type(value) is dict:
             for k, v in value.items():
@@ -507,12 +515,18 @@ class ActiveSoftwareSnapshot(object):
                     for s in v:
                         new_list.append(_expand_esw_at(s))
                     env_spec['value'][k] = new_list
+                elif type(v) in (str, unicode):
+                    # if v is str
+                    env_spec['value'][k] = _expand_esw_at(v)
                 else:
-                    # assume v is str
-                    env_spec['value'][k] = _expand_esw_at(s)
-        else:
-            # assume str type
+                    # for all other types, just assign v
+                    env_spec['value'][k] = v
+        elif type(value) in (str, unicode):
+            # if value is of str type
             env_spec['value'] = _expand_esw_at(value)
+        else:
+            # for all other types, just assign value
+            env_spec['value'] = value
 
     @staticmethod
     def _expand_sw_at_tags_in_env_var_values(sw_name, sw_env_spec_list):
