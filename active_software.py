@@ -481,14 +481,11 @@ class ActiveSoftwareSnapshot(object):
                                 (sw_name, install_env_spec_filepath))
 
             with open(env_spec_filepath, 'r') as env_spec_fp:
-                env_spec_list += json.load(env_spec_fp)
-
-        env_spec_dirpath = os.path.dirname(env_spec_filepath)
-
-        env_spec_list = self._expand_sw_at_tags_in_env_var_values(
-                                    sw_name,
-                                    self._expand_includes(env_spec_dirpath,
-                                                          env_spec_list))
+                env_spec_dirpath = os.path.dirname(env_spec_filepath)
+                loaded_env_spec_list = self._expand_includes(env_spec_dirpath,
+                                                    json.load(env_spec_fp))
+                env_spec_list += self._expand_sw_at_tags_in_env_var_values(
+                                        sw_name, loaded_env_spec_list)
 
         self._process_var_name_embedded_dependent_versions(env_spec_list)
 
